@@ -3,8 +3,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 import requests
-import urllib.parse
-import time
 
 # ============================================
 # CONFIGURACIÓN DE PÁGINA
@@ -343,7 +341,8 @@ RECETAS_DB = {
             "Decora con ramita de menta"
         ],
         "tips": "No machaques la menta con fuerza, solo presiona para liberar aceites esenciales",
-        "imagen_prompt": "professional cocktail photography, mojito in tall crystal glass, fresh mint leaves, lime wedges, crushed ice, golden rum, soda bubbles, dark elegant bar background, warm lighting, high quality, 4k"
+        "imagen_prompt": "professional cocktail photography, mojito in tall crystal glass, fresh mint leaves, lime wedges, crushed ice, golden rum, soda bubbles, dark elegant bar background, warm lighting, high quality, 4k",
+        "pexels_query": "mojito cocktail"
     },
     "margarita": {
         "nombre": "Margarita",
@@ -358,7 +357,8 @@ RECETAS_DB = {
             "Cuela en vaso escarchado con sal"
         ],
         "tips": "Usa tequila 100% agave para mejor sabor",
-        "imagen_prompt": "professional cocktail photography, margarita in elegant margarita glass with salt rim, golden tequila, lime wedge, crystal clear ice, dark sophisticated bar background, warm ambient lighting, high quality, 4k"
+        "imagen_prompt": "professional cocktail photography, margarita in elegant margarita glass with salt rim, golden tequila, lime wedge, crystal clear ice, dark sophisticated bar background, warm ambient lighting, high quality, 4k",
+        "pexels_query": "margarita cocktail"
     },
     "old fashioned": {
         "nombre": "Old Fashioned",
@@ -375,7 +375,8 @@ RECETAS_DB = {
             "Exprime cáscara de naranja sobre el trago"
         ],
         "tips": "El hielo debe ser grande para dilución lenta",
-        "imagen_prompt": "professional cocktail photography, old fashioned in crystal rocks glass, large clear ice cube, amber bourbon whiskey, orange peel twist, dark wood bar counter, warm golden lighting, sophisticated atmosphere, high quality, 4k"
+        "imagen_prompt": "professional cocktail photography, old fashioned in crystal rocks glass, large clear ice cube, amber bourbon whiskey, orange peel twist, dark wood bar counter, warm golden lighting, sophisticated atmosphere, high quality, 4k",
+        "pexels_query": "old fashioned whiskey cocktail"
     },
     "negroni": {
         "nombre": "Negroni",
@@ -390,7 +391,8 @@ RECETAS_DB = {
             "Decora con twist de naranja"
         ],
         "tips": "Clásico italiano, perfecto para aperitivo",
-        "imagen_prompt": "professional cocktail photography, negroni in lowball glass, vibrant red campari, gin, sweet vermouth, large ice sphere, orange twist garnish, dark elegant bar background, sophisticated lighting, high quality, 4k"
+        "imagen_prompt": "professional cocktail photography, negroni in lowball glass, vibrant red campari, gin, sweet vermouth, large ice sphere, orange twist garnish, dark elegant bar background, sophisticated lighting, high quality, 4k",
+        "pexels_query": "negroni cocktail bar"
     },
     "piña colada": {
         "nombre": "Piña Colada",
@@ -405,7 +407,8 @@ RECETAS_DB = {
             "Decora con piña y cereza"
         ],
         "tips": "Usa piña fresca para mejor sabor",
-        "imagen_prompt": "professional cocktail photography, piña colada in tall hurricane glass, creamy white coconut, fresh pineapple slice, maraschino cherry, tropical umbrella, dark bar background with warm lighting, high quality, 4k"
+        "imagen_prompt": "professional cocktail photography, piña colada in tall hurricane glass, creamy white coconut, fresh pineapple slice, maraschino cherry, tropical umbrella, dark bar background with warm lighting, high quality, 4k",
+        "pexels_query": "pina colada tropical cocktail"
     },
     "espresso martini": {
         "nombre": "Espresso Martini",
@@ -421,7 +424,8 @@ RECETAS_DB = {
             "Decora con 3 granos de café"
         ],
         "tips": "La clave está en agitar muy fuerte para crear espuma",
-        "imagen_prompt": "professional cocktail photography, espresso martini in elegant coupe glass, dark coffee cocktail with creamy foam top, three coffee beans on top, vodka, dark sophisticated bar background, dramatic lighting, high quality, 4k"
+        "imagen_prompt": "professional cocktail photography, espresso martini in elegant coupe glass, dark coffee cocktail with creamy foam top, three coffee beans on top, vodka, dark sophisticated bar background, dramatic lighting, high quality, 4k",
+        "pexels_query": "espresso martini coffee cocktail"
     },
     "daiquiri": {
         "nombre": "Daiquiri",
@@ -436,7 +440,8 @@ RECETAS_DB = {
             "Decora con twist de lima"
         ],
         "tips": "El equilibrio entre dulce y ácido es la clave",
-        "imagen_prompt": "professional cocktail photography, daiquiri in elegant coupe glass, clear white rum, lime juice, sugar syrup, crystal clear ice cold, dark bar background, sophisticated lighting, high quality, 4k"
+        "imagen_prompt": "professional cocktail photography, daiquiri in elegant coupe glass, clear white rum, lime juice, sugar syrup, crystal clear ice cold, dark bar background, sophisticated lighting, high quality, 4k",
+        "pexels_query": "daiquiri rum cocktail"
     },
     "whiskey sour": {
         "nombre": "Whiskey Sour",
@@ -452,81 +457,88 @@ RECETAS_DB = {
             "Decora con cereza y naranja"
         ],
         "tips": "La clara de huevo crea una textura sedosa y espuma",
-        "imagen_prompt": "professional cocktail photography, whiskey sour in rocks glass, golden bourbon, lemon juice, frothy egg white top, cherry and orange garnish, dark elegant bar background, warm lighting, high quality, 4k"
+        "imagen_prompt": "professional cocktail photography, whiskey sour in rocks glass, golden bourbon, lemon juice, frothy egg white top, cherry and orange garnish, dark elegant bar background, warm lighting, high quality, 4k",
+        "pexels_query": "whiskey sour cocktail bourbon"
     }
 }
 
 # ============================================
-# FUNCIÓN PARA GENERAR IMÁGENES CON POLLINATIONS.AI
-# Descarga los bytes primero para evitar errores de carga
+# PEXELS API - IMÁGENES PROFESIONALES INSTANTÁNEAS
 # ============================================
-def generar_imagen_url(prompt, nombre_coctel, seed=None):
-    """Genera URL de imagen usando Pollinations.ai (gratis, sin API key)"""
-    try:
-        if seed is None:
-            seed = hash(nombre_coctel) % 10000
-        prompt_encoded = urllib.parse.quote(prompt)
-        url = (
-            f"https://image.pollinations.ai/prompt/{prompt_encoded}"
-            f"?width=512&height=512&nologo=true&seed={seed}"
-            f"&model=flux&negative_prompt=text,watermark,blurry,low+quality"
-        )
-        return url
-    except Exception as e:
-        return None
+PEXELS_API_KEY = "8AijNcycbO2DbzW1gVtclDH2MbrjnaBE2OvdNrSie1vpefxnR0crjKSt"
+PEXELS_CACHE = {}  # Cache para no repetir llamadas a la API
 
-def descargar_imagen(url, timeout=25):
-    """Descarga la imagen como bytes desde la URL con reintentos"""
-    for intento in range(2):
+def buscar_imagen_pexels(query, nombre_coctel):
+    """
+    Busca una foto profesional en Pexels por término de búsqueda.
+    - Instantáneo (<1 segundo)
+    - Cache para no repetir llamadas
+    - Fallback a búsqueda genérica si no hay resultados
+    """
+    # Revisar cache primero
+    if nombre_coctel in PEXELS_CACHE:
+        return PEXELS_CACHE[nombre_coctel]
+
+    headers = {"Authorization": PEXELS_API_KEY}
+    queries = [query, f"{query} drink", "cocktail bar elegant"]
+
+    for q in queries:
         try:
-            resp = requests.get(url, timeout=timeout, stream=True)
-            if resp.status_code == 200 and len(resp.content) > 1000:
-                return resp.content
+            resp = requests.get(
+                "https://api.pexels.com/v1/search",
+                headers=headers,
+                params={"query": q, "per_page": 5, "orientation": "square"},
+                timeout=8
+            )
+            if resp.status_code == 200:
+                data = resp.json()
+                photos = data.get("photos", [])
+                if photos:
+                    # Tomar la segunda foto si hay varias (más variedad)
+                    idx = min(1, len(photos) - 1)
+                    url = photos[idx]["src"]["large"]
+                    PEXELS_CACHE[nombre_coctel] = url
+                    return url
         except Exception:
-            time.sleep(2)
+            continue
+
     return None
 
-# ============================================
-# FUNCIÓN PARA MOSTRAR IMAGEN CON MANEJO DE ERRORES
-# ============================================
 def mostrar_imagen_coctel(receta, key_suffix=""):
     """
-    Muestra la imagen del cóctel:
-    - Descarga bytes via requests (más confiable que URL directa)
-    - Spinner mientras genera
-    - Placeholder elegante como fallback
+    Muestra imagen profesional del cóctel vía Pexels API.
+    - Velocidad: <1 segundo
+    - Fotos reales de alta calidad
+    - Fallback elegante si falla
     """
     nombre = receta['nombre']
-    prompt = receta['imagen_prompt']
+    query = receta.get('pexels_query', f"{nombre} cocktail")
 
-    with st.spinner(f"🎨 Generando imagen de {nombre} con IA..."):
-        imagen_url = generar_imagen_url(prompt, nombre)
-        imagen_bytes = descargar_imagen(imagen_url) if imagen_url else None
+    with st.spinner(f"📸 Cargando imagen de {nombre}..."):
+        imagen_url = buscar_imagen_pexels(query, nombre)
 
-        if imagen_bytes:
+        if imagen_url:
             st.image(
-                imagen_bytes,
-                caption=f"🎨 {nombre} — Generado con IA (Pollinations.ai)",
+                imagen_url,
+                caption=f"📸 {nombre} — Imagen vía Pexels API",
                 use_container_width=True
             )
             st.markdown(
-                '<p style="color:#888;font-size:0.78rem;text-align:center;">'
-                '🤖 Imagen única generada en tiempo real con IA</p>',
+                '<p style="color:#888;font-size:0.75rem;text-align:center;">'
+                '🔌 Conectado a Pexels API en tiempo real</p>',
                 unsafe_allow_html=True
             )
         else:
             mostrar_placeholder_imagen(nombre)
 
 def mostrar_placeholder_imagen(nombre_coctel):
-    """
-    Muestra un placeholder elegante si la imagen no carga
-    """
+    """Placeholder elegante si la imagen no carga"""
     st.markdown(f"""
     <div class="image-placeholder">
         <div style="font-size: 4rem; margin-bottom: 1rem;">🍹</div>
         <h3 style="color: #D4A017 !important; margin-bottom: 0.5rem;">{nombre_coctel}</h3>
         <p style="color: #888 !important; font-size: 0.9rem;">
-            Imagen generada por IA<br>
+            Imagen no disponible en este momento
         </p>
     </div>
     """, unsafe_allow_html=True)
@@ -669,8 +681,8 @@ with tabs[1]:
         st.markdown("""
         <div style="background: rgba(212,160,23,0.1); border-radius: 10px; padding: 1rem; margin-top: 1rem;">
             <p style="color: #D4A017 !important; font-size: 0.9rem; margin: 0;">
-            🎨 <b>Imágenes generadas con IA</b><br>
-            Cada receta incluye una imagen única creada por inteligencia artificial en tiempo real usando Pollinations.ai (gratis, sin API key).
+            🎨 <b>Imágenes reales vía Pexels API</b><br>
+            Cada receta incluye una fotografía profesional en tiempo real obtenida directamente desde <b>Pexels API</b>.
             </p>
         </div>
         """, unsafe_allow_html=True)
