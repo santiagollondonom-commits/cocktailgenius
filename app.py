@@ -421,151 +421,497 @@ st.markdown("""
 # BASE DE DATOS DE RECETAS
 # ============================================
 RECETAS_DB = {
+    # ── RON ──────────────────────────────────────────────────────────────
     "mojito": {
         "nombre": "Mojito Clásico",
-        "dificultad": 2,
-        "tiempo": 5,
-        "ingredientes": ["Ron blanco", "Lima", "Menta", "Azúcar", "Soda"],
+        "dificultad": 2, "tiempo": 5,
+        "ingredientes": ["Ron blanco", "Lima", "Limón", "Menta", "Hierbabuena", "Azúcar", "Azúcar blanca", "Soda", "Agua con gas"],
         "medidas": {"Ron blanco": "45ml", "Lima": "30ml", "Menta": "6 hojas", "Azúcar": "2 cdas", "Soda": "Completar"},
-        "preparacion": [
-            "Machaca la menta con azúcar y jugo de lima en el vaso",
-            "Añade hielo picado hasta 3/4 del vaso",
-            "Vierte el ron blanco",
-            "Completa con agua con gas",
-            "Decora con ramita de menta"
-        ],
+        "preparacion": ["Machaca la menta con azúcar y jugo de lima en el vaso", "Añade hielo picado hasta 3/4 del vaso", "Vierte el ron blanco", "Completa con agua con gas", "Decora con ramita de menta"],
         "tips": "No machaques la menta con fuerza, solo presiona para liberar aceites esenciales sin amargar.",
-        "pexels_query": "mojito cocktail mint",
-        "tendencia_score": 82
+        "pexels_query": "mojito cocktail mint", "tendencia_score": 82
     },
-    "margarita": {
-        "nombre": "Margarita",
-        "dificultad": 1,
-        "tiempo": 3,
-        "ingredientes": ["Tequila", "Triple sec", "Lima", "Sal"],
-        "medidas": {"Tequila": "50ml", "Triple sec": "25ml", "Lima": "15ml", "Sal": "Para el borde"},
-        "preparacion": [
-            "Pasa limón por el borde del vaso y luego por sal",
-            "En coctelera con hielo, mezcla tequila, triple sec y jugo de lima",
-            "Agita 10 segundos",
-            "Cuela en vaso escarchado con sal"
-        ],
-        "tips": "Usa tequila 100% agave para un sabor limpio y auténtico.",
-        "pexels_query": "margarita cocktail",
-        "tendencia_score": 91
-    },
-    "old fashioned": {
-        "nombre": "Old Fashioned",
-        "dificultad": 3,
-        "tiempo": 5,
-        "ingredientes": ["Bourbon", "Azúcar", "Angostura", "Naranja"],
-        "medidas": {"Bourbon": "45ml", "Azúcar": "1 terrón", "Angostura": "2 gotas", "Naranja": "Cáscara"},
-        "preparacion": [
-            "Coloca el terrón de azúcar en el vaso",
-            "Añade 2 gotas de angostura y un poco de agua",
-            "Disuelve el azúcar formando pasta",
-            "Añade hielo grande y el bourbon",
-            "Remueve suavemente 30 segundos",
-            "Exprime cáscara de naranja sobre el trago"
-        ],
-        "tips": "El hielo debe ser grande para una dilución lenta y controlada.",
-        "pexels_query": "old fashioned whiskey cocktail",
-        "tendencia_score": 88
-    },
-    "negroni": {
-        "nombre": "Negroni",
-        "dificultad": 2,
-        "tiempo": 3,
-        "ingredientes": ["Gin", "Campari", "Vermut rojo"],
-        "medidas": {"Gin": "30ml", "Campari": "30ml", "Vermut rojo": "30ml"},
-        "preparacion": [
-            "En vaso bajo con hielo grande",
-            "Vierte partes iguales de gin, Campari y vermut",
-            "Remueve suavemente 20 segundos",
-            "Decora con twist de naranja"
-        ],
-        "tips": "Clásico italiano ideal para aperitivo. Usa un gin botánico de calidad.",
-        "pexels_query": "negroni cocktail bar",
-        "tendencia_score": 74
+    "daiquiri": {
+        "nombre": "Daiquiri Clásico",
+        "dificultad": 1, "tiempo": 3,
+        "ingredientes": ["Ron blanco", "Ron", "Lima", "Limón", "Jarabe de azúcar", "Azúcar", "Azúcar blanca"],
+        "medidas": {"Ron blanco": "60ml", "Jugo de lima": "25ml", "Jarabe de azúcar": "15ml"},
+        "preparacion": ["En coctelera con hielo, añade ron, jugo de lima y jarabe", "Agita vigorosamente 10 segundos", "Cuela doblemente en copa fría", "Decora con twist de lima"],
+        "tips": "El equilibrio entre dulce y ácido es la esencia de este clásico.",
+        "pexels_query": "daiquiri rum cocktail", "tendencia_score": 78
     },
     "piña colada": {
         "nombre": "Piña Colada",
-        "dificultad": 2,
-        "tiempo": 7,
-        "ingredientes": ["Ron blanco", "Jugo de piña", "Crema de coco", "Hielo"],
+        "dificultad": 2, "tiempo": 7,
+        "ingredientes": ["Ron blanco", "Ron", "Piña", "Jugo de piña", "Crema de coco", "Leche de coco", "Coco"],
         "medidas": {"Ron blanco": "60ml", "Jugo de piña": "90ml", "Crema de coco": "30ml", "Hielo": "1 taza"},
-        "preparacion": [
-            "Licúa todos los ingredientes con hielo",
-            "Bate hasta consistencia cremosa",
-            "Sirve en vaso alto",
-            "Decora con piña y cereza"
-        ],
+        "preparacion": ["Licúa todos los ingredientes con hielo", "Bate hasta consistencia cremosa", "Sirve en vaso alto", "Decora con piña y cereza"],
         "tips": "Usa piña fresca para un sabor más vibrante.",
-        "pexels_query": "pina colada tropical cocktail",
-        "tendencia_score": 65
+        "pexels_query": "pina colada tropical cocktail", "tendencia_score": 65
     },
+    "cuba libre": {
+        "nombre": "Cuba Libre",
+        "dificultad": 1, "tiempo": 2,
+        "ingredientes": ["Ron blanco", "Ron", "Ron añejo", "Coca-Cola", "Cola", "Lima", "Limón"],
+        "medidas": {"Ron": "50ml", "Cola": "Completar", "Lima": "Jugo de media"},
+        "preparacion": ["Llena un vaso alto con hielo", "Añade el ron y el jugo de lima", "Completa con cola bien fría", "Revuelve suavemente y decora con rodaja de lima"],
+        "tips": "Usa ron añejo para más carácter, o ron blanco para algo más ligero.",
+        "pexels_query": "cuba libre rum cola cocktail", "tendencia_score": 72
+    },
+    "dark and stormy": {
+        "nombre": "Dark & Stormy",
+        "dificultad": 1, "tiempo": 2,
+        "ingredientes": ["Ron oscuro", "Ron añejo", "Ron", "Cerveza de jengibre", "Ginger beer", "Jengibre", "Lima"],
+        "medidas": {"Ron oscuro": "60ml", "Ginger beer": "Completar", "Lima": "Jugo de media"},
+        "preparacion": ["Llena vaso alto con hielo", "Añade el jugo de lima", "Vierte la ginger beer", "Flota el ron oscuro encima sin mezclar", "Decora con rodaja de lima"],
+        "tips": "No mezcles el ron para mantener el efecto visual de dos capas.",
+        "pexels_query": "dark stormy rum ginger cocktail", "tendencia_score": 68
+    },
+    "mai tai": {
+        "nombre": "Mai Tai",
+        "dificultad": 3, "tiempo": 8,
+        "ingredientes": ["Ron blanco", "Ron oscuro", "Ron", "Triple sec", "Naranja", "Lima", "Limón", "Almendra", "Jarabe de azúcar"],
+        "medidas": {"Ron blanco": "30ml", "Ron oscuro": "30ml", "Triple sec": "15ml", "Lima": "20ml", "Jarabe de almendra": "10ml"},
+        "preparacion": ["Agita todos los ingredientes con hielo excepto el ron oscuro", "Sirve en vaso bajo con hielo", "Flota el ron oscuro encima", "Decora con menta y rodaja de piña"],
+        "tips": "El jarabe de almendra (orgeat) es el ingrediente secreto que lo distingue.",
+        "pexels_query": "mai tai tropical rum cocktail", "tendencia_score": 61
+    },
+    # ── GIN ──────────────────────────────────────────────────────────────
+    "gin tonic": {
+        "nombre": "Gin Tonic",
+        "dificultad": 1, "tiempo": 2,
+        "ingredientes": ["Gin", "Ginebra", "Agua tónica", "Tónica", "Lima", "Limón", "Pepino", "Romero"],
+        "medidas": {"Gin": "50ml", "Tónica": "150ml", "Lima": "2 rodajas"},
+        "preparacion": ["Enfría una copa balloon o vaso alto", "Añade hielo abundante", "Vierte el gin", "Agrega la tónica muy fría sin agitar", "Decora con lima y aromáticos al gusto"],
+        "tips": "El gin tonic vive o muere por la calidad de la tónica. Úsala bien fría.",
+        "pexels_query": "gin tonic cocktail lime", "tendencia_score": 88
+    },
+    "negroni": {
+        "nombre": "Negroni",
+        "dificultad": 2, "tiempo": 3,
+        "ingredientes": ["Gin", "Ginebra", "Campari", "Vermut rojo", "Vermut", "Naranja"],
+        "medidas": {"Gin": "30ml", "Campari": "30ml", "Vermut rojo": "30ml"},
+        "preparacion": ["En vaso bajo con hielo grande", "Vierte partes iguales de gin, Campari y vermut", "Remueve suavemente 20 segundos", "Decora con twist de naranja"],
+        "tips": "Clásico italiano ideal para aperitivo. Usa un gin botánico de calidad.",
+        "pexels_query": "negroni cocktail bar", "tendencia_score": 74
+    },
+    "tom collins": {
+        "nombre": "Tom Collins",
+        "dificultad": 1, "tiempo": 3,
+        "ingredientes": ["Gin", "Ginebra", "Limón", "Lima", "Azúcar", "Jarabe de azúcar", "Soda", "Agua con gas"],
+        "medidas": {"Gin": "45ml", "Jugo de limón": "30ml", "Jarabe de azúcar": "15ml", "Soda": "Completar"},
+        "preparacion": ["En vaso alto con hielo, añade gin, limón y jarabe", "Completa con soda bien fría", "Revuelve suavemente", "Decora con rodaja de limón y cereza"],
+        "tips": "Perfecto para días calurosos. Puedes usar lima en lugar de limón.",
+        "pexels_query": "tom collins gin cocktail", "tendencia_score": 66
+    },
+    "gimlet": {
+        "nombre": "Gimlet",
+        "dificultad": 1, "tiempo": 3,
+        "ingredientes": ["Gin", "Ginebra", "Lima", "Limón", "Jarabe de azúcar", "Azúcar"],
+        "medidas": {"Gin": "60ml", "Jugo de lima": "20ml", "Jarabe de azúcar": "10ml"},
+        "preparacion": ["En coctelera con hielo, añade todos los ingredientes", "Agita bien 10 segundos", "Cuela en copa fría", "Decora con twist de lima"],
+        "tips": "Simple pero elegante. El equilibrio ácido-dulce es clave.",
+        "pexels_query": "gimlet gin lime cocktail", "tendencia_score": 59
+    },
+    "aviation": {
+        "nombre": "Aviation",
+        "dificultad": 2, "tiempo": 4,
+        "ingredientes": ["Gin", "Ginebra", "Limón", "Lima", "Cereza", "Jarabe de azúcar", "Violeta"],
+        "medidas": {"Gin": "45ml", "Jugo de limón": "15ml", "Maraschino": "15ml", "Crème de violette": "7ml"},
+        "preparacion": ["En coctelera con hielo, combina todos los ingredientes", "Agita vigorosamente 12 segundos", "Cuela doblemente en copa de cóctel", "Decora con cereza"],
+        "tips": "El color azul-lavanda es su sello. No omitas la crème de violette.",
+        "pexels_query": "aviation cocktail purple blue", "tendencia_score": 55
+    },
+    "bee's knees": {
+        "nombre": "Bee's Knees",
+        "dificultad": 1, "tiempo": 3,
+        "ingredientes": ["Gin", "Ginebra", "Limón", "Lima", "Miel", "Jarabe de miel"],
+        "medidas": {"Gin": "60ml", "Jugo de limón": "22ml", "Jarabe de miel": "22ml"},
+        "preparacion": ["Prepara jarabe calentando miel con agua caliente en proporción 1:1", "En coctelera con hielo, añade gin, limón y jarabe de miel", "Agita vigorosamente", "Cuela en copa fría", "Decora con twist de limón"],
+        "tips": "El jarabe de miel casero eleva este cóctel a otro nivel.",
+        "pexels_query": "bees knees gin honey cocktail", "tendencia_score": 63
+    },
+    # ── VODKA ─────────────────────────────────────────────────────────────
     "espresso martini": {
         "nombre": "Espresso Martini",
-        "dificultad": 2,
-        "tiempo": 7,
-        "ingredientes": ["Vodka", "Licor de café", "Espresso", "Hielo"],
-        "medidas": {"Vodka": "50ml", "Licor de café": "30ml", "Espresso": "30ml fresco", "Hielo": "Al gusto"},
-        "preparacion": [
-            "Prepara espresso y deja enfriar 1 minuto",
-            "En coctelera con hielo, añade vodka, licor de café y espresso",
-            "Agita enérgicamente 15 segundos",
-            "Cuela doblemente en copa fría",
-            "Decora con 3 granos de café"
-        ],
+        "dificultad": 2, "tiempo": 7,
+        "ingredientes": ["Vodka", "Licor de café", "Café", "Espresso", "Café negro", "Kahlúa"],
+        "medidas": {"Vodka": "50ml", "Licor de café": "30ml", "Espresso": "30ml fresco"},
+        "preparacion": ["Prepara espresso y deja enfriar 1 minuto", "En coctelera con hielo, añade vodka, licor de café y espresso", "Agita enérgicamente 15 segundos", "Cuela doblemente en copa fría", "Decora con 3 granos de café"],
         "tips": "La clave está en agitar muy fuerte para crear la espuma característica.",
-        "pexels_query": "espresso martini coffee cocktail",
-        "tendencia_score": 95
+        "pexels_query": "espresso martini coffee cocktail", "tendencia_score": 95
     },
-    "daiquiri": {
-        "nombre": "Daiquiri",
-        "dificultad": 1,
-        "tiempo": 3,
-        "ingredientes": ["Ron blanco", "Jugo de lima", "Jarabe de azúcar"],
-        "medidas": {"Ron blanco": "60ml", "Jugo de lima": "25ml", "Jarabe de azúcar": "15ml"},
-        "preparacion": [
-            "En coctelera con hielo, añade ron, jugo de lima y jarabe",
-            "Agita vigorosamente 10 segundos",
-            "Cuela doblemente en copa fría",
-            "Decora con twist de lima"
-        ],
-        "tips": "El equilibrio entre dulce y ácido es la esencia de este clásico.",
-        "pexels_query": "daiquiri rum cocktail",
-        "tendencia_score": 78
+    "cosmopolitan": {
+        "nombre": "Cosmopolitan",
+        "dificultad": 2, "tiempo": 4,
+        "ingredientes": ["Vodka", "Triple sec", "Naranja", "Arándano", "Jugo de arándano", "Lima", "Limón"],
+        "medidas": {"Vodka": "45ml", "Triple sec": "15ml", "Jugo de arándano": "30ml", "Lima": "15ml"},
+        "preparacion": ["En coctelera con hielo, añade todos los ingredientes", "Agita bien hasta enfriar", "Cuela en copa martini", "Decora con twist de naranja"],
+        "tips": "El jugo de arándano le da el color rosa icónico. Usa poca cantidad para no endulzar en exceso.",
+        "pexels_query": "cosmopolitan pink cocktail", "tendencia_score": 69
+    },
+    "moscow mule": {
+        "nombre": "Moscow Mule",
+        "dificultad": 1, "tiempo": 2,
+        "ingredientes": ["Vodka", "Cerveza de jengibre", "Ginger beer", "Jengibre", "Lima", "Limón"],
+        "medidas": {"Vodka": "50ml", "Ginger beer": "150ml", "Lima": "Jugo de media"},
+        "preparacion": ["Llena un vaso (idealmente de cobre) con hielo", "Añade el vodka y el jugo de lima", "Completa con ginger beer bien fría", "Revuelve suavemente", "Decora con rodaja de lima y jengibre"],
+        "tips": "El vaso de cobre mantiene la bebida fría más tiempo y es parte de la experiencia.",
+        "pexels_query": "moscow mule copper mug cocktail", "tendencia_score": 80
+    },
+    "vodka tonic": {
+        "nombre": "Vodka Tonic",
+        "dificultad": 1, "tiempo": 2,
+        "ingredientes": ["Vodka", "Agua tónica", "Tónica", "Lima", "Limón", "Pepino"],
+        "medidas": {"Vodka": "50ml", "Tónica": "150ml", "Lima": "2 rodajas"},
+        "preparacion": ["Llena vaso alto con hielo", "Añade el vodka", "Vierte la tónica fría sin agitar", "Exprime y añade rodajas de lima"],
+        "tips": "Alternativa más suave al gin tonic. Perfecta para quienes no gustan del sabor botánico.",
+        "pexels_query": "vodka tonic lime cocktail", "tendencia_score": 71
+    },
+    "screwdriver": {
+        "nombre": "Screwdriver",
+        "dificultad": 1, "tiempo": 2,
+        "ingredientes": ["Vodka", "Naranja", "Jugo de naranja", "Jugo natural", "Jugo"],
+        "medidas": {"Vodka": "50ml", "Jugo de naranja": "150ml"},
+        "preparacion": ["Llena vaso alto con hielo", "Añade el vodka", "Completa con jugo de naranja recién exprimido", "Revuelve y decora con rodaja de naranja"],
+        "tips": "Usa naranja recién exprimida, no de caja, para una diferencia notable.",
+        "pexels_query": "screwdriver vodka orange juice cocktail", "tendencia_score": 62
+    },
+    "bloody mary": {
+        "nombre": "Bloody Mary",
+        "dificultad": 3, "tiempo": 6,
+        "ingredientes": ["Vodka", "Tomate", "Jugo de tomate", "Limón", "Lima", "Salsa picante", "Tabasco", "Sal", "Pimienta", "Apio", "Worcestershire"],
+        "medidas": {"Vodka": "50ml", "Jugo de tomate": "150ml", "Limón": "15ml", "Tabasco": "Al gusto"},
+        "preparacion": ["En vaso alto con hielo, añade vodka", "Agrega jugo de tomate", "Sazona con limón, tabasco, sal y pimienta", "Revuelve bien", "Decora con apio y rodaja de limón"],
+        "tips": "El Bloody Mary es muy personal: ajusta el picante y la acidez a tu gusto.",
+        "pexels_query": "bloody mary tomato cocktail", "tendencia_score": 64
+    },
+    # ── TEQUILA ───────────────────────────────────────────────────────────
+    "margarita": {
+        "nombre": "Margarita",
+        "dificultad": 1, "tiempo": 3,
+        "ingredientes": ["Tequila", "Triple sec", "Cointreau", "Naranja", "Lima", "Limón", "Sal"],
+        "medidas": {"Tequila": "50ml", "Triple sec": "25ml", "Lima": "15ml", "Sal": "Para el borde"},
+        "preparacion": ["Pasa lima por el borde del vaso y luego por sal", "En coctelera con hielo, mezcla tequila, triple sec y jugo de lima", "Agita 10 segundos", "Cuela en vaso escarchado con sal"],
+        "tips": "Usa tequila 100% agave para un sabor limpio y auténtico.",
+        "pexels_query": "margarita cocktail", "tendencia_score": 91
+    },
+    "paloma": {
+        "nombre": "Paloma",
+        "dificultad": 1, "tiempo": 3,
+        "ingredientes": ["Tequila", "Toronja", "Pomelo", "Jugo de toronja", "Jugo de pomelo", "Lima", "Sal", "Soda", "Agua con gas"],
+        "medidas": {"Tequila": "50ml", "Jugo de toronja": "90ml", "Lima": "15ml", "Soda": "Splash"},
+        "preparacion": ["Escacha el borde del vaso con sal", "Llena con hielo", "Añade tequila y jugo de toronja", "Exprime la lima y añade un chorrito de soda", "Decora con rodaja de toronja"],
+        "tips": "Es el cóctel de tequila más popular en México. Simple y refrescante.",
+        "pexels_query": "paloma tequila grapefruit cocktail", "tendencia_score": 76
+    },
+    "tequila sunrise": {
+        "nombre": "Tequila Sunrise",
+        "dificultad": 1, "tiempo": 3,
+        "ingredientes": ["Tequila", "Naranja", "Jugo de naranja", "Jugo", "Granadina", "Cereza"],
+        "medidas": {"Tequila": "45ml", "Jugo de naranja": "120ml", "Granadina": "15ml"},
+        "preparacion": ["Llena vaso alto con hielo", "Añade tequila y jugo de naranja", "Revuelve suavemente", "Vierte la granadina despacio por el borde (se hundirá creando el efecto)", "No mezcles"],
+        "tips": "El truco está en añadir la granadina al final sin mezclar para el efecto degradado.",
+        "pexels_query": "tequila sunrise orange cocktail", "tendencia_score": 70
+    },
+    "tommy's margarita": {
+        "nombre": "Tommy's Margarita",
+        "dificultad": 1, "tiempo": 3,
+        "ingredientes": ["Tequila", "Lima", "Limón", "Jarabe de agave", "Agave", "Miel de agave"],
+        "medidas": {"Tequila": "60ml", "Lima": "30ml", "Jarabe de agave": "15ml"},
+        "preparacion": ["En coctelera con hielo, añade tequila, lima y agave", "Agita 12 segundos", "Cuela en vaso con hielo", "Decora con rodaja de lima"],
+        "tips": "La versión moderna de la margarita: sin triple sec, el tequila brilla más.",
+        "pexels_query": "margarita tequila lime cocktail", "tendencia_score": 77
+    },
+    # ── WHISKY / BOURBON ──────────────────────────────────────────────────
+    "old fashioned": {
+        "nombre": "Old Fashioned",
+        "dificultad": 3, "tiempo": 5,
+        "ingredientes": ["Bourbon", "Whisky", "Whiskey", "Azúcar", "Azúcar blanca", "Angostura", "Naranja"],
+        "medidas": {"Bourbon": "45ml", "Azúcar": "1 terrón", "Angostura": "2 gotas", "Naranja": "Cáscara"},
+        "preparacion": ["Coloca el terrón de azúcar en el vaso", "Añade 2 gotas de angostura y un poco de agua", "Disuelve el azúcar formando pasta", "Añade hielo grande y el bourbon", "Remueve suavemente 30 segundos", "Exprime cáscara de naranja sobre el trago"],
+        "tips": "El hielo debe ser grande para una dilución lenta y controlada.",
+        "pexels_query": "old fashioned whiskey cocktail", "tendencia_score": 88
     },
     "whiskey sour": {
         "nombre": "Whiskey Sour",
-        "dificultad": 2,
-        "tiempo": 7,
-        "ingredientes": ["Bourbon", "Jugo de limón", "Jarabe de azúcar", "Clara de huevo"],
-        "medidas": {"Bourbon": "60ml", "Jugo de limón": "30ml", "Jarabe de azúcar": "15ml", "Clara de huevo": "1 unidad (opcional)"},
-        "preparacion": [
-            "En coctelera seca (sin hielo), mezcla bourbon, limón, jarabe y clara de huevo",
-            "Agita en seco 15 segundos (dry shake)",
-            "Añade hielo y agita 10 segundos más",
-            "Cuela en vaso bajo con hielo",
-            "Decora con cereza y naranja"
-        ],
+        "dificultad": 2, "tiempo": 7,
+        "ingredientes": ["Bourbon", "Whisky", "Whiskey", "Limón", "Lima", "Jarabe de azúcar", "Azúcar", "Huevo", "Clara de huevo"],
+        "medidas": {"Bourbon": "60ml", "Jugo de limón": "30ml", "Jarabe de azúcar": "15ml", "Clara de huevo": "1 (opcional)"},
+        "preparacion": ["En coctelera seca (sin hielo), mezcla bourbon, limón, jarabe y clara", "Agita en seco 15 segundos (dry shake)", "Añade hielo y agita 10 segundos más", "Cuela en vaso bajo con hielo", "Decora con cereza y naranja"],
         "tips": "La clara de huevo en seco crea una textura sedosa y espuma densa.",
-        "pexels_query": "whiskey sour cocktail bourbon",
-        "tendencia_score": 70
-    }
+        "pexels_query": "whiskey sour cocktail bourbon", "tendencia_score": 70
+    },
+    "manhattan": {
+        "nombre": "Manhattan",
+        "dificultad": 2, "tiempo": 4,
+        "ingredientes": ["Bourbon", "Whisky", "Whiskey", "Vermut rojo", "Vermut", "Angostura", "Cereza"],
+        "medidas": {"Bourbon": "50ml", "Vermut rojo": "25ml", "Angostura": "2 gotas"},
+        "preparacion": ["En vaso mezclador con hielo, añade bourbon, vermut y angostura", "Remueve suavemente durante 30 segundos", "Cuela en copa de cóctel", "Decora con cereza al marrasquino"],
+        "tips": "Se remueve, no se agita. Agitar rompe el equilibrio del cóctel.",
+        "pexels_query": "manhattan whiskey cocktail", "tendencia_score": 73
+    },
+    "whisky highball": {
+        "nombre": "Whisky Highball",
+        "dificultad": 1, "tiempo": 2,
+        "ingredientes": ["Whisky", "Whiskey", "Bourbon", "Soda", "Agua con gas", "Agua mineral"],
+        "medidas": {"Whisky": "45ml", "Soda": "Completar"},
+        "preparacion": ["Llena vaso alto con mucho hielo", "Añade el whisky", "Vierte la soda fría sin mezclar mucho", "Decora con twist de limón si deseas"],
+        "tips": "Técnica japonesa: usa hielo en abundancia y soda bien fría para no diluir.",
+        "pexels_query": "whisky highball soda cocktail", "tendencia_score": 67
+    },
+    "mint julep": {
+        "nombre": "Mint Julep",
+        "dificultad": 2, "tiempo": 5,
+        "ingredientes": ["Bourbon", "Whisky", "Menta", "Hierbabuena", "Azúcar", "Jarabe de azúcar"],
+        "medidas": {"Bourbon": "60ml", "Menta": "8 hojas", "Jarabe de azúcar": "15ml"},
+        "preparacion": ["Machaca suavemente la menta con el jarabe en el vaso", "Llena con hielo picado fino", "Añade el bourbon", "Remueve hasta que el vaso esté escarcha", "Decora con ramita de menta abundante"],
+        "tips": "El vaso debe empañarse completamente de frío. Usa hielo picado, no cubos.",
+        "pexels_query": "mint julep bourbon cocktail", "tendencia_score": 58
+    },
+    # ── CHAMPÁN / PROSECCO / VINO ─────────────────────────────────────────
+    "aperol spritz": {
+        "nombre": "Aperol Spritz",
+        "dificultad": 1, "tiempo": 2,
+        "ingredientes": ["Aperol", "Prosecco", "Champán", "Cava", "Vino espumoso", "Soda", "Agua con gas", "Naranja"],
+        "medidas": {"Prosecco": "90ml", "Aperol": "60ml", "Soda": "Splash"},
+        "preparacion": ["Llena copa grande con hielo", "Añade el prosecco", "Agrega el Aperol", "Chorrito de soda", "Decora con rodaja de naranja"],
+        "tips": "La proporción 3-2-1 (prosecco-aperol-soda) es la original veneciana.",
+        "pexels_query": "aperol spritz orange cocktail", "tendencia_score": 89
+    },
+    "mimosa": {
+        "nombre": "Mimosa",
+        "dificultad": 1, "tiempo": 2,
+        "ingredientes": ["Prosecco", "Champán", "Cava", "Vino espumoso", "Naranja", "Jugo de naranja"],
+        "medidas": {"Champán": "90ml", "Jugo de naranja": "90ml"},
+        "preparacion": ["Enfría la copa de champán", "Vierte el jugo de naranja recién exprimido", "Añade el champán o prosecco lentamente", "No mezcles para preservar las burbujas"],
+        "tips": "Usa jugo de naranja fresco. La proporción es 50/50 pero puedes ajustar al gusto.",
+        "pexels_query": "mimosa champagne orange cocktail", "tendencia_score": 75
+    },
+    "kir royal": {
+        "nombre": "Kir Royal",
+        "dificultad": 1, "tiempo": 2,
+        "ingredientes": ["Champán", "Prosecco", "Cava", "Vino espumoso", "Cassis", "Licor de grosella", "Moras", "Frutos rojos"],
+        "medidas": {"Champán": "150ml", "Crème de cassis": "15ml"},
+        "preparacion": ["En copa fría, añade el crème de cassis", "Vierte el champán muy lentamente", "No mezcles", "Decora con mora o frambuesa"],
+        "tips": "El cassis se hunde solo. Solo añade el champán encima para el efecto degradado.",
+        "pexels_query": "kir royal champagne cocktail", "tendencia_score": 60
+    },
+    "sangria": {
+        "nombre": "Sangría Española",
+        "dificultad": 2, "tiempo": 10,
+        "ingredientes": ["Vino tinto", "Vino", "Naranja", "Limón", "Lima", "Manzana", "Melocotón", "Durazno", "Azúcar", "Brandy", "Coñac", "Soda"],
+        "medidas": {"Vino tinto": "750ml", "Brandy": "60ml", "Azúcar": "2 cdas", "Naranja": "1 entera", "Limón": "1 entero"},
+        "preparacion": ["Corta las frutas en rodajas y coloca en jarra", "Añade el azúcar y el brandy", "Vierte el vino tinto", "Refrigera al menos 2 horas", "Sirve con hielo y un chorrito de soda"],
+        "tips": "Prepárala con antelación, mínimo 2 horas en nevera para que maceren las frutas.",
+        "pexels_query": "sangria red wine fruit cocktail", "tendencia_score": 71
+    },
+    # ── LICORES Y MEZCLAS ─────────────────────────────────────────────────
+    "amaretto sour": {
+        "nombre": "Amaretto Sour",
+        "dificultad": 2, "tiempo": 5,
+        "ingredientes": ["Amaretto", "Licor de almendra", "Limón", "Lima", "Jarabe de azúcar", "Azúcar", "Huevo", "Clara de huevo"],
+        "medidas": {"Amaretto": "45ml", "Jugo de limón": "30ml", "Jarabe de azúcar": "7ml", "Clara de huevo": "1"},
+        "preparacion": ["Dry shake todos los ingredientes sin hielo 10 segundos", "Añade hielo y agita 10 segundos más", "Cuela en vaso bajo con hielo", "Decora con cereza y naranja"],
+        "tips": "El amaretto ya es dulce; ajusta el jarabe según tu preferencia.",
+        "pexels_query": "amaretto sour cocktail", "tendencia_score": 66
+    },
+    "baileys on the rocks": {
+        "nombre": "Baileys on the Rocks",
+        "dificultad": 1, "tiempo": 1,
+        "ingredientes": ["Baileys", "Crema irlandesa", "Licor de crema", "Café", "Chocolate", "Leche"],
+        "medidas": {"Baileys": "60ml"},
+        "preparacion": ["Llena vaso bajo con hielo grande", "Vierte el Baileys", "Opcionalmente añade un chorrito de café frío"],
+        "tips": "Sirve siempre con hielo para atenuar el dulzor de la crema.",
+        "pexels_query": "baileys irish cream cocktail", "tendencia_score": 57
+    },
+    "sex on the beach": {
+        "nombre": "Sex on the Beach",
+        "dificultad": 1, "tiempo": 3,
+        "ingredientes": ["Vodka", "Durazno", "Melocotón", "Licor de durazno", "Jugo de arándano", "Arándano", "Naranja", "Jugo de naranja"],
+        "medidas": {"Vodka": "40ml", "Licor de durazno": "20ml", "Jugo de naranja": "40ml", "Jugo de arándano": "40ml"},
+        "preparacion": ["Llena vaso alto con hielo", "Añade vodka y licor de durazno", "Agrega los jugos", "Revuelve suavemente", "Decora con naranja y cereza"],
+        "tips": "No lo mezcles demasiado para mantener las capas de color.",
+        "pexels_query": "sex beach vodka orange cocktail", "tendencia_score": 64
+    },
+    "pisco sour": {
+        "nombre": "Pisco Sour",
+        "dificultad": 2, "tiempo": 5,
+        "ingredientes": ["Pisco", "Lima", "Limón", "Jarabe de azúcar", "Azúcar", "Huevo", "Clara de huevo", "Angostura"],
+        "medidas": {"Pisco": "60ml", "Lima": "30ml", "Jarabe de azúcar": "20ml", "Clara de huevo": "1"},
+        "preparacion": ["Dry shake todos los ingredientes sin hielo", "Añade hielo y agita enérgicamente", "Cuela en copa fría", "Decora con 3 gotas de angostura"],
+        "tips": "El dry shake es esencial para la espuma densa. Es el orgullo de Perú y Chile.",
+        "pexels_query": "pisco sour peruvian cocktail", "tendencia_score": 69
+    },
+    # ── SIN ALCOHOL / MOCKTAILS ───────────────────────────────────────────
+    "virgin mojito": {
+        "nombre": "Virgin Mojito",
+        "dificultad": 1, "tiempo": 4,
+        "ingredientes": ["Lima", "Limón", "Menta", "Hierbabuena", "Azúcar", "Azúcar blanca", "Soda", "Agua con gas", "Agua mineral"],
+        "medidas": {"Lima": "30ml", "Menta": "8 hojas", "Azúcar": "2 cdas", "Soda": "Completar"},
+        "preparacion": ["Machaca menta con azúcar y lima en el vaso", "Añade hielo picado", "Completa con soda bien fría", "Decora con ramita de menta y rodaja de lima"],
+        "tips": "Agrega un poco de jengibre rallado para darle un toque de spice sin alcohol.",
+        "pexels_query": "virgin mojito mocktail mint lime", "tendencia_score": 73
+    },
+    "limonada casera": {
+        "nombre": "Limonada de la Casa",
+        "dificultad": 1, "tiempo": 5,
+        "ingredientes": ["Limón", "Lima", "Azúcar", "Jarabe de azúcar", "Agua", "Menta", "Hierbabuena"],
+        "medidas": {"Limón": "3 unidades", "Azúcar": "3 cdas", "Agua": "250ml"},
+        "preparacion": ["Exprime los limones y mezcla con azúcar hasta disolver", "Añade agua fría y hielo", "Ajusta dulzor al gusto", "Decora con rodaja de limón y menta"],
+        "tips": "Añade ralladura de limón para intensificar el sabor cítrico.",
+        "pexels_query": "homemade lemonade fresh lemon", "tendencia_score": 68
+    },
+    "agua fresca de sandía": {
+        "nombre": "Agua Fresca de Sandía",
+        "dificultad": 1, "tiempo": 5,
+        "ingredientes": ["Sandía", "Lima", "Limón", "Azúcar", "Menta", "Agua"],
+        "medidas": {"Sandía": "400g", "Lima": "15ml", "Azúcar": "1 cda", "Agua": "200ml"},
+        "preparacion": ["Licúa la sandía con el agua", "Cuela para eliminar semillas", "Añade lima y azúcar al gusto", "Sirve sobre hielo con hoja de menta"],
+        "tips": "Perfecta en verano. Añade un chorrito de ron para convertirla en coctel.",
+        "pexels_query": "watermelon agua fresca drink", "tendencia_score": 61
+    },
+    # ── CREMOSOS Y CALIENTES ──────────────────────────────────────────────
+    "white russian": {
+        "nombre": "White Russian",
+        "dificultad": 1, "tiempo": 2,
+        "ingredientes": ["Vodka", "Licor de café", "Café", "Kahlúa", "Crema de leche", "Nata", "Leche"],
+        "medidas": {"Vodka": "50ml", "Licor de café": "25ml", "Crema": "25ml"},
+        "preparacion": ["En vaso bajo con hielo, añade vodka y licor de café", "Vierte la crema encima muy despacio", "Deja que flote sin mezclar", "Sirve así para el efecto visual"],
+        "tips": "La crema debe flotar. Si la mezclas pierdes el efecto característico.",
+        "pexels_query": "white russian cream coffee cocktail", "tendencia_score": 72
+    },
+    "black russian": {
+        "nombre": "Black Russian",
+        "dificultad": 1, "tiempo": 2,
+        "ingredientes": ["Vodka", "Licor de café", "Café", "Kahlúa"],
+        "medidas": {"Vodka": "50ml", "Licor de café": "25ml"},
+        "preparacion": ["En vaso bajo con hielo grande", "Añade vodka y licor de café", "Remueve suavemente 10 segundos"],
+        "tips": "El hermano oscuro del White Russian. Simple, fuerte y equilibrado.",
+        "pexels_query": "black russian vodka coffee cocktail", "tendencia_score": 60
+    },
+    "irish coffee": {
+        "nombre": "Irish Coffee",
+        "dificultad": 2, "tiempo": 6,
+        "ingredientes": ["Whisky", "Whiskey", "Café", "Espresso", "Café negro", "Crema de leche", "Nata", "Azúcar", "Azúcar morena"],
+        "medidas": {"Whisky irlandés": "45ml", "Café caliente": "120ml", "Azúcar morena": "1 cda", "Crema": "30ml"},
+        "preparacion": ["Calienta la taza con agua caliente y vacíala", "Disuelve el azúcar morena con un poco de café caliente", "Añade el whisky", "Completa con café caliente", "Vierte la crema sobre el dorso de una cuchara para que flote"],
+        "tips": "La crema NO se mezcla. Se bebe el café caliente a través de la crema fría.",
+        "pexels_query": "irish coffee cream whiskey", "tendencia_score": 75
+    },
+    "hot toddy": {
+        "nombre": "Hot Toddy",
+        "dificultad": 1, "tiempo": 5,
+        "ingredientes": ["Whisky", "Whiskey", "Bourbon", "Miel", "Jarabe de miel", "Limón", "Lima", "Agua caliente", "Canela", "Clavo"],
+        "medidas": {"Whisky": "45ml", "Miel": "1 cda", "Limón": "30ml", "Agua caliente": "150ml"},
+        "preparacion": ["Disuelve la miel en el agua caliente", "Añade el whisky y el jugo de limón", "Decora con palito de canela y rodaja de limón con clavo"],
+        "tips": "El remedio escocés para el frío. También funciona con brandy o ron.",
+        "pexels_query": "hot toddy whiskey honey lemon", "tendencia_score": 63
+    },
+    # ── TROPICALES Y ESPECIALES ───────────────────────────────────────────
+    "caipirinha": {
+        "nombre": "Caipirinha",
+        "dificultad": 2, "tiempo": 4,
+        "ingredientes": ["Cachaça", "Aguardiente", "Lima", "Limón", "Azúcar", "Azúcar blanca"],
+        "medidas": {"Cachaça": "60ml", "Lima": "1 entera", "Azúcar": "2 cdas"},
+        "preparacion": ["Corta la lima en cuartos y coloca en vaso", "Añade el azúcar", "Machaca fuerte para extraer el jugo y aceites de la cáscara", "Llena de hielo picado", "Añade la cachaça y mezcla bien"],
+        "tips": "La lima entera (no solo el jugo) le da el sabor característico amargo-cítrico.",
+        "pexels_query": "caipirinha lime brazil cocktail", "tendencia_score": 77
+    },
+    "michelada": {
+        "nombre": "Michelada",
+        "dificultad": 2, "tiempo": 4,
+        "ingredientes": ["Cerveza", "Limón", "Lima", "Salsa picante", "Tabasco", "Sal", "Salsa inglesa", "Worcestershire", "Tomate", "Jugo de tomate"],
+        "medidas": {"Cerveza": "355ml", "Limón": "30ml", "Tabasco": "Al gusto", "Sal": "Para el borde"},
+        "preparacion": ["Escacha el borde del vaso con sal (y chile en polvo opcional)", "Añade hielo al vaso", "Exprime el limón", "Añade salsas al gusto", "Vierte la cerveza fría y mezcla suavemente"],
+        "tips": "Usa cerveza clara y fría. El picante es a gusto pero define el carácter.",
+        "pexels_query": "michelada beer lime spicy cocktail", "tendencia_score": 70
+    },
+    "frozen margarita": {
+        "nombre": "Frozen Margarita",
+        "dificultad": 2, "tiempo": 5,
+        "ingredientes": ["Tequila", "Triple sec", "Cointreau", "Naranja", "Lima", "Limón", "Sal"],
+        "medidas": {"Tequila": "50ml", "Triple sec": "25ml", "Lima": "30ml", "Hielo": "1 taza"},
+        "preparacion": ["Escacha borde del vaso con sal", "Licúa tequila, triple sec, lima y hielo hasta consistencia sorbete", "Sirve inmediatamente en vaso escarchado"],
+        "tips": "Agrega trozos de mango o fresa al licuar para variaciones de sabor.",
+        "pexels_query": "frozen margarita slush cocktail", "tendencia_score": 74
+    },
+    "clericot": {
+        "nombre": "Clericot",
+        "dificultad": 1, "tiempo": 8,
+        "ingredientes": ["Vino blanco", "Vino", "Naranja", "Manzana", "Durazno", "Melocotón", "Fresa", "Azúcar", "Soda", "Agua con gas"],
+        "medidas": {"Vino blanco": "750ml", "Azúcar": "2 cdas", "Frutas": "Al gusto"},
+        "preparacion": ["Corta todas las frutas en cubos pequeños", "Mezcla con azúcar y deja reposar 5 minutos", "Añade el vino blanco", "Refrigera 1 hora", "Sirve con hielo y un toque de soda"],
+        "tips": "La versión blanca de la sangría. Usa frutas de temporada.",
+        "pexels_query": "clericot white wine fruit punch", "tendencia_score": 59
+    },
+    "coquito": {
+        "nombre": "Coquito",
+        "dificultad": 2, "tiempo": 10,
+        "ingredientes": ["Ron blanco", "Ron", "Crema de coco", "Leche de coco", "Coco", "Leche condensada", "Leche evaporada", "Leche", "Canela", "Vainilla"],
+        "medidas": {"Ron": "240ml", "Crema de coco": "400ml", "Leche condensada": "400ml", "Leche evaporada": "340ml"},
+        "preparacion": ["Licúa todos los ingredientes hasta integrar", "Añade canela y vainilla al gusto", "Refrigera al menos 2 horas", "Sirve muy frío con canela espolvoreada"],
+        "tips": "Mejora de un día para otro. Agita bien antes de servir.",
+        "pexels_query": "coquito coconut rum christmas drink", "tendencia_score": 65
+    },
+    "bramble": {
+        "nombre": "Bramble",
+        "dificultad": 2, "tiempo": 4,
+        "ingredientes": ["Gin", "Ginebra", "Limón", "Lima", "Jarabe de azúcar", "Azúcar", "Moras", "Frutos rojos", "Crème de mûre", "Licor de mora"],
+        "medidas": {"Gin": "45ml", "Jugo de limón": "25ml", "Jarabe de azúcar": "15ml", "Licor de mora": "15ml"},
+        "preparacion": ["En vaso con hielo picado, añade gin, limón y jarabe", "Remueve", "Vierte el licor de mora encima en espiral sin mezclar", "Decora con moras y rodaja de limón"],
+        "tips": "El licor de mora debe verterlo despacio al final para crear el efecto visual.",
+        "pexels_query": "bramble gin blackberry cocktail", "tendencia_score": 67
+    },
+    "frozen daiquiri de fresa": {
+        "nombre": "Daiquiri de Fresa Frozen",
+        "dificultad": 2, "tiempo": 5,
+        "ingredientes": ["Ron blanco", "Ron", "Fresa", "Fresas", "Lima", "Limón", "Jarabe de azúcar", "Azúcar"],
+        "medidas": {"Ron blanco": "60ml", "Fresas": "6 unidades", "Lima": "30ml", "Jarabe de azúcar": "20ml", "Hielo": "1 taza"},
+        "preparacion": ["Licúa ron, fresas, lima, jarabe y hielo hasta textura suave", "Prueba y ajusta dulzor", "Sirve inmediatamente en copa fría", "Decora con fresa entera"],
+        "tips": "Usa fresas maduras y congeladas para mejor textura y sabor más intenso.",
+        "pexels_query": "strawberry daiquiri frozen cocktail", "tendencia_score": 79
+    },
+    "hugo spritz": {
+        "nombre": "Hugo Spritz",
+        "dificultad": 1, "tiempo": 2,
+        "ingredientes": ["Prosecco", "Champán", "Cava", "Vino espumoso", "Flores de saúco", "Jarabe de saúco", "Elderflower", "Menta", "Hierbabuena", "Soda", "Lima", "Limón"],
+        "medidas": {"Prosecco": "100ml", "Jarabe de saúco": "20ml", "Soda": "Splash", "Menta": "3 hojas"},
+        "preparacion": ["Llena copa con hielo y hojas de menta", "Añade jarabe de flores de saúco", "Vierte el prosecco", "Completa con un toque de soda", "Decora con lima y menta"],
+        "tips": "El rival del Aperol Spritz. Más floral y ligero. El jarabe de saúco (elderflower) es esencial.",
+        "pexels_query": "hugo spritz elderflower cocktail", "tendencia_score": 82
+    },
+    "dark chocolate martini": {
+        "nombre": "Chocolate Martini",
+        "dificultad": 2, "tiempo": 4,
+        "ingredientes": ["Vodka", "Licor de chocolate", "Cacao", "Chocolate", "Crema de cacao", "Baileys", "Crema de leche", "Leche"],
+        "medidas": {"Vodka": "45ml", "Licor de chocolate": "30ml", "Crema de cacao": "15ml"},
+        "preparacion": ["Enfría bien la copa martini", "En coctelera con hielo, mezcla vodka, licor de chocolate y crema de cacao", "Agita 12 segundos", "Cuela en copa", "Decora con cacao espolvoreado"],
+        "tips": "Puedes escarchar el borde de la copa con chocolate rallado.",
+        "pexels_query": "chocolate martini cocktail dark", "tendencia_score": 66
+    },
 }
+
 
 # ============================================
 # DATOS TENDENCIA ML — Modelo de regresión
 # ============================================
 TENDENCIAS_DATA = {
     "Espresso Martini":  {"score_actual": 95, "crecimiento": 28, "categoria": "Cafeinado"},
+    "Aperol Spritz":     {"score_actual": 89, "crecimiento": 22, "categoria": "Cítrico"},
     "Margarita":         {"score_actual": 91, "crecimiento": 15, "categoria": "Cítrico"},
+    "Hugo Spritz":       {"score_actual": 82, "crecimiento": 20, "categoria": "Refrescante"},
     "Old Fashioned":     {"score_actual": 88, "crecimiento": 12, "categoria": "Whisky"},
+    "Moscow Mule":       {"score_actual": 80, "crecimiento": 10, "categoria": "Refrescante"},
     "Mojito":            {"score_actual": 82, "crecimiento": 5,  "categoria": "Refrescante"},
-    "Daiquiri":          {"score_actual": 78, "crecimiento": 18, "categoria": "Ron"},
+    "Paloma":            {"score_actual": 76, "crecimiento": 18, "categoria": "Cítrico"},
+    "Mimosa":            {"score_actual": 75, "crecimiento": 8,  "categoria": "Cítrico"},
+    "Irish Coffee":      {"score_actual": 75, "crecimiento": 6,  "categoria": "Cafeinado"},
+    "Caipirinha":        {"score_actual": 77, "crecimiento": 9,  "categoria": "Cítrico"},
+    "Daiquiri de Fresa": {"score_actual": 79, "crecimiento": 14, "categoria": "Frutal"},
     "Negroni":           {"score_actual": 74, "crecimiento": 8,  "categoria": "Amargo"},
+    "Pisco Sour":        {"score_actual": 69, "crecimiento": 11, "categoria": "Cítrico"},
+    "Sangria":           {"score_actual": 71, "crecimiento": 4,  "categoria": "Frutal"},
     "Whiskey Sour":      {"score_actual": 70, "crecimiento": 10, "categoria": "Cítrico"},
     "Piña Colada":       {"score_actual": 65, "crecimiento": -3, "categoria": "Tropical"},
 }
@@ -619,10 +965,17 @@ def mostrar_imagen_coctel(receta, key_suffix=""):
 # FUNCIONES AUXILIARES
 # ============================================
 def buscar_receta(ingredientes_usuario):
-    ingredientes_lower = [i.lower().strip() for i in ingredientes_usuario.split(",")]
+    # Normalizar y separar ingredientes del usuario
+    ingredientes_lower = [i.lower().strip() for i in re.split(r'[,;\s]+', ingredientes_usuario) if i.strip()]
     resultados = []
     for key, receta in RECETAS_DB.items():
-        coincidencias = sum(1 for ing in ingredientes_lower if any(ing in r.lower() for r in receta["ingredientes"]))
+        receta_ings = [r.lower() for r in receta["ingredientes"]]
+        coincidencias = 0
+        for ing_user in ingredientes_lower:
+            for ing_receta in receta_ings:
+                if ing_user in ing_receta or ing_receta in ing_user:
+                    coincidencias += 1
+                    break
         if coincidencias > 0:
             resultados.append((coincidencias, receta))
     resultados.sort(reverse=True, key=lambda x: x[0])
@@ -662,21 +1015,15 @@ def calcular_porciones(receta_base, num_personas):
 # ============================================
 # HEADER
 # ============================================
-col_l, col_c, col_r = st.columns([1, 3, 1])
+col_l, col_c, col_r = st.columns([1, 2, 1])
 with col_c:
-    logo_col, title_col = st.columns([1, 4])
-    with logo_col:
+    try:
+        st.image("logo2.png", use_container_width=True)
+    except:
         try:
-            st.image("logo.png", width=90)
+            st.image("logo.png", use_container_width=True)
         except:
-            pass
-    with title_col:
-        st.markdown("""
-        <div style="padding-top:0.5rem;">
-            <div class="site-title">Cocktail<span>Genius</span></div>
-            <div class="site-tagline">Tu bar personal — Impulsado por Inteligencia Artificial</div>
-        </div>
-        """, unsafe_allow_html=True)
+            st.markdown('<div class="site-title" style="text-align:center;">Cocktail<span>Genius</span></div>', unsafe_allow_html=True)
 
 st.markdown('<hr style="margin:1.5rem 0;">', unsafe_allow_html=True)
 
@@ -761,18 +1108,7 @@ with tabs[0]:
             </div>
             """, unsafe_allow_html=True)
 
-        st.markdown("""
-        <div class="card" style="margin-top:1rem;">
-            <div class="card-label">IA Generativa utilizada</div>
-            <p class="card-body" style="font-size:0.82rem;line-height:2;">
-            Textos — Claude / ChatGPT<br>
-            Imágenes — Canva AI + Pexels API<br>
-            Video — Canva<br>
-            Voz — ElevenLabs<br>
-            Código — Claude / Kimi
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
+
 
 # ============================================
 # TAB 2: GENRECETA IA
@@ -794,7 +1130,9 @@ with tabs[1]:
             posibles junto con imagen profesional en tiempo real vía Pexels API.
             </p>
             <p class="card-body" style="margin-top:0.75rem;font-size:0.8rem;color:#7A7870;">
-            Prueba con: ron, tequila, vodka, gin, lima, menta, piña, bourbon, espresso...
+            Prueba con: gin, vodka, ron, tequila, whisky, bourbon, champán, prosecco,<br>
+            vino, cerveza, lima, limón, naranja, menta, miel, café, espresso, moras,<br>
+            fresas, piña, coco, jengibre, canela, huevo, leche, crema, azúcar...
             </p>
         </div>
         """, unsafe_allow_html=True)
@@ -850,7 +1188,7 @@ with tabs[1]:
 
                     st.markdown('<hr style="margin:1.5rem 0;">', unsafe_allow_html=True)
             else:
-                st.info("No encontramos recetas con esos ingredientes. Prueba con: ron, tequila, vodka, gin, lima, menta, piña...")
+                st.info("No encontramos recetas con esos ingredientes. Prueba con: gin, vodka, ron, tequila, whisky, lima, limón, naranja, menta, miel, café, prosecco, vino, cerveza, fresa, piña, coco...")
         elif buscar:
             st.warning("Por favor ingresa al menos un ingrediente.")
         else:
