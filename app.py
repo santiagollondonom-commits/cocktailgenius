@@ -2,7 +2,9 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+import requests
 import base64
+from io import BytesIO
 
 # ============================================
 # CONFIGURACIÓN DE PÁGINA
@@ -15,7 +17,7 @@ st.set_page_config(
 )
 
 # ============================================
-# CSS PERSONALIZADO - FONDO OSCURO + LETRA BLANCA
+# CSS PERSONALIZADO - FONDO OSCURO + TEXTO BLANCO + INPUTS VISIBLES
 # ============================================
 st.markdown("""
 <style>
@@ -24,8 +26,8 @@ st.markdown("""
         background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
     }
     
-    /* TEXTO BLANCO POR DEFECTO */
-    .stApp, p, h1, h2, h3, h4, h5, h6, div, span, label {
+    /* TEXTO BLANCO BASE */
+    .stApp, p, h1, h2, h3, h4, h5, h6, div, span, label, li {
         color: #ffffff !important;
     }
     
@@ -54,6 +56,21 @@ st.markdown("""
         font-style: italic;
         letter-spacing: 2px;
         margin-bottom: 2rem;
+    }
+    
+    /* HEADER CON LOGO CENTRADO */
+    .header-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .logo-img {
+        width: 80px;
+        height: 80px;
+        object-fit: contain;
     }
     
     /* CARDS ELEGANTES */
@@ -121,6 +138,7 @@ st.markdown("""
         border-radius: 50%;
         font-weight: bold;
         margin-right: 1rem;
+        flex-shrink: 0;
     }
     
     .result-box {
@@ -131,15 +149,25 @@ st.markdown("""
         margin: 1rem 0;
     }
     
-    /* INPUTS */
+    /* INPUTS - CORREGIDOS PARA SER VISIBLES */
     .stTextInput > div > div > input,
     .stNumberInput > div > div > input,
-    .stSelectbox > div > div,
-    .stTextArea > div > div > textarea {
-        background: rgba(255,255,255,0.1) !important;
-        color: white !important;
-        border: 1px solid rgba(212,160,23,0.3) !important;
+    .stSelectbox > div > div > div,
+    .stTextArea > div > div > textarea,
+    div[data-baseweb="input"] input,
+    div[data-baseweb="textarea"] textarea {
+        background: rgba(30, 30, 50, 0.9) !important;
+        color: #ffffff !important;
+        border: 2px solid #D4A017 !important;
         border-radius: 10px !important;
+        padding: 0.8rem !important;
+        font-size: 1rem !important;
+    }
+    
+    /* PLACEHOLDER COLOR */
+    ::placeholder {
+        color: #888888 !important;
+        opacity: 1 !important;
     }
     
     /* SLIDERS */
@@ -147,7 +175,7 @@ st.markdown("""
         background: #D4A017 !important;
     }
     
-    /* BOTONES */
+    /* BOTONES ESTILO WEB PROFESIONAL */
     .stButton > button {
         background: linear-gradient(135deg, #D4A017 0%, #F4D03F 100%) !important;
         color: #0f0f0f !important;
@@ -155,25 +183,35 @@ st.markdown("""
         border-radius: 30px !important;
         border: none !important;
         padding: 0.8rem 2rem !important;
+        font-size: 1rem !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 4px 15px rgba(212,160,23,0.3) !important;
     }
     
-    /* TABS */
+    .stButton > button:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 6px 20px rgba(212,160,23,0.5) !important;
+    }
+    
+    /* TABS ESTILO BOTONES */
     .stTabs [data-baseweb="tab-list"] {
-        gap: 1rem;
+        gap: 0.5rem;
         background: rgba(255,255,255,0.05);
-        padding: 1rem;
+        padding: 0.5rem;
         border-radius: 50px;
     }
     
     .stTabs [data-baseweb="tab"] {
         color: #b8b8b8 !important;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
+        font-weight: 500;
+        border-radius: 25px;
+        padding: 0.5rem 1rem;
     }
     
     .stTabs [aria-selected="true"] {
         background: linear-gradient(135deg, #D4A017 0%, #F4D03F 100%) !important;
         color: #0f0f0f !important;
-        border-radius: 25px !important;
         font-weight: bold !important;
     }
     
@@ -222,11 +260,23 @@ st.markdown("""
         border: 1px solid #e74c3c !important;
         color: white !important;
     }
+    
+    /* SELECTBOX OPTIONS */
+    div[role="listbox"] div {
+        color: #ffffff !important;
+        background: #1a1a2e !important;
+    }
+    
+    /* NUMBER INPUT ARROWS */
+    button[data-testid="stNumberInputStepUp"],
+    button[data-testid="stNumberInputStepDown"] {
+        color: #D4A017 !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
 # ============================================
-# BASE DE DATOS DE RECETAS
+# BASE DE DATOS DE RECETAS CON IMÁGENES
 # ============================================
 RECETAS_DB = {
     "mojito": {
@@ -242,7 +292,8 @@ RECETAS_DB = {
             "Completa con agua con gas",
             "Decora con ramita de menta"
         ],
-        "tips": "No machaques la menta con fuerza, solo presiona para liberar aceites esenciales"
+        "tips": "No machaques la menta con fuerza, solo presiona para liberar aceites esenciales",
+        "imagen_prompt": "Mojito cocktail in tall glass with fresh mint leaves, lime slices, ice cubes, golden rum, soda bubbles, dark bar background, professional food photography, elegant lighting"
     },
     "margarita": {
         "nombre": "Margarita",
@@ -256,7 +307,8 @@ RECETAS_DB = {
             "Agita 10 segundos",
             "Cuela en vaso escarchado con sal"
         ],
-        "tips": "Usa tequila 100% agave para mejor sabor"
+        "tips": "Usa tequila 100% agave para mejor sabor",
+        "imagen_prompt": "Margarita cocktail in salt-rimmed glass, golden tequila, lime wedge, professional bar photography, dark elegant background, crystal clear ice"
     },
     "old fashioned": {
         "nombre": "Old Fashioned",
@@ -272,7 +324,8 @@ RECETAS_DB = {
             "Remueve suavemente 30 segundos",
             "Exprime cáscara de naranja sobre el trago"
         ],
-        "tips": "El hielo debe ser grande para dilución lenta"
+        "tips": "El hielo debe ser grande para dilución lenta",
+        "imagen_prompt": "Old Fashioned cocktail in crystal glass, large ice cube, amber bourbon, orange peel twist, dark wood bar, professional photography, warm lighting"
     },
     "negroni": {
         "nombre": "Negroni",
@@ -286,7 +339,8 @@ RECETAS_DB = {
             "Remueve suavemente 20 segundos",
             "Decora con twist de naranja"
         ],
-        "tips": "Clásico italiano, perfecto para aperitivo"
+        "tips": "Clásico italiano, perfecto para aperitivo",
+        "imagen_prompt": "Negroni cocktail in lowball glass, red Campari, gin, sweet vermouth, large ice cube, orange twist, dark sophisticated bar background, professional photography"
     },
     "piña colada": {
         "nombre": "Piña Colada",
@@ -300,7 +354,8 @@ RECETAS_DB = {
             "Sirve en vaso alto",
             "Decora con piña y cereza"
         ],
-        "tips": "Usa piña fresca para mejor sabor"
+        "tips": "Usa piña fresca para mejor sabor",
+        "imagen_prompt": "Piña Colada cocktail in tall hurricane glass, creamy white coconut, pineapple slice, cherry, tropical bar, professional photography, dark background contrast"
     },
     "espresso martini": {
         "nombre": "Espresso Martini",
@@ -315,9 +370,40 @@ RECETAS_DB = {
             "Cuela doblemente en copa fría",
             "Decora con 3 granos de café"
         ],
-        "tips": "La clave está en agitar muy fuerte para crear espuma"
+        "tips": "La clave está en agitar muy fuerte para crear espuma",
+        "imagen_prompt": "Espresso Martini in coupe glass, dark coffee cocktail, three coffee beans on foam, vodka, professional bar photography, elegant dark background"
     }
 }
+
+# ============================================
+# FUNCIÓN PARA GENERAR IMÁGENES CON IA (HUGGING FACE)
+# ============================================
+def generar_imagen_coctel(prompt, nombre_coctel):
+    """Genera imagen de cóctel usando Stable Diffusion via Hugging Face"""
+    try:
+        # Usar una API gratuita de Hugging Face
+        API_URL = "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0"
+        headers = {"Authorization": "Bearer hf_demo"}  # Token demo gratuito
+        
+        payload = {
+            "inputs": prompt,
+            "parameters": {
+                "num_inference_steps": 30,
+                "guidance_scale": 7.5,
+                "negative_prompt": "blurry, low quality, text, watermark, ugly"
+            }
+        }
+        
+        response = requests.post(API_URL, headers=headers, json=payload, timeout=30)
+        
+        if response.status_code == 200:
+            image_bytes = response.content
+            return image_bytes
+        else:
+            return None
+    except Exception as e:
+        st.warning(f"⚠️ No se pudo generar imagen: {str(e)}")
+        return None
 
 # ============================================
 # FUNCIONES AUXILIARES
@@ -352,18 +438,22 @@ def calcular_porciones(receta_base, num_personas):
     return medidas_calculadas
 
 # ============================================
-# HEADER CON LOGO
+# HEADER CON LOGO CENTRADO
 # ============================================
-col_logo, col_title = st.columns([1, 3])
+col1, col2, col3 = st.columns([1, 3, 1])
 
-with col_logo:
-    try:
-        st.image("logo.png", width=120)
-    except:
-        st.markdown("<div style='font-size: 4rem; text-align: center;'>🍹</div>", unsafe_allow_html=True)
-
-with col_title:
-    st.markdown('<div class="main-title">CocktailGenius</div>', unsafe_allow_html=True)
+with col2:
+    header_col1, header_col2 = st.columns([1, 3])
+    
+    with header_col1:
+        try:
+            st.image("logo.png", width=100, use_column_width=False)
+        except:
+            st.markdown("<div style='font-size: 4rem; text-align: right;'>🍹</div>", unsafe_allow_html=True)
+    
+    with header_col2:
+        st.markdown('<div class="main-title" style="text-align: left; margin-top: 0.5rem;">CocktailGenius</div>', unsafe_allow_html=True)
+    
     st.markdown('<div class="hero-subtitle">TU BAR PERSONAL, IMPULSADO POR INTELIGENCIA ARTIFICIAL</div>', unsafe_allow_html=True)
 
 st.markdown("---")
@@ -384,17 +474,17 @@ with tabs[0]:
         <div class="card-elegant">
             <h2 style="color: #D4A017 !important; font-size: 2rem; margin-bottom: 1rem;">La revolución de la mixología llegó</h2>
             <p class="card-text">
-            CocktailGenius es la primera plataforma que combina <b>inteligencia artificial</b> 
+            CocktailGenius es la primera plataforma que combina <b style="color: #D4A017 !important;">inteligencia artificial</b> 
             con el arte de la coctelería. Desde recetas personalizadas hasta predicciones 
             de tendencias con Machine Learning, transformamos tu cocina en el bar más 
             sofisticado de la ciudad.
             </p>
             <br>
             <p class="card-text">
-            🧠 <b>+500 recetas</b> en nuestra base de datos<br>
-            🤖 <b>Chatbot bartender</b> disponible 24/7<br>
-            📊 <b>Modelo ML</b> con 66.9% de precisión<br>
-            🎬 <b>Video comercial</b> generado con IA
+            🧠 <b style="color: #D4A017 !important;">+500 recetas</b> en nuestra base de datos<br>
+            🤖 <b style="color: #D4A017 !important;">Chatbot bartender</b> disponible 24/7<br>
+            📊 <b style="color: #D4A017 !important;">Modelo ML</b> con 66.9% de precisión<br>
+            🎬 <b style="color: #D4A017 !important;">Video comercial</b> generado con IA
             </p>
         </div>
         """, unsafe_allow_html=True)
@@ -413,14 +503,13 @@ with tabs[0]:
         </div>
         """, unsafe_allow_html=True)
         
-        # VIDEO
         try:
             st.video("video.mp4")
         except:
             st.info("📹 Aquí irá tu video MP4 de 27 segundos")
 
 # ============================================
-# TAB 2: GENRECETA IA
+# TAB 2: GENRECETA IA - CON IMÁGENES GENERADAS
 # ============================================
 with tabs[1]:
     st.markdown('<div class="section-title">🧠 GenReceta IA</div>', unsafe_allow_html=True)
@@ -434,7 +523,7 @@ with tabs[1]:
             <p class="card-text">
             Ingresa los ingredientes que tienes disponibles 
             (separados por comas) y nuestra IA te sugerirá 
-            la receta perfecta con medidas exactas.
+            la receta perfecta con medidas exactas e imagen generada.
             </p>
         </div>
         """, unsafe_allow_html=True)
@@ -442,10 +531,14 @@ with tabs[1]:
         ingredientes_input = st.text_input(
             "Tus ingredientes:",
             placeholder="Ej: ron, lima, menta, azúcar...",
-            key="ingredientes"
+            key="ingredientes",
+            help="Escribe ingredientes separados por comas"
         )
         
         buscar = st.button("🔍 Buscar Receta", use_container_width=True)
+        
+        # Opción para generar imagen
+        generar_img = st.checkbox("✨ Generar imagen IA del cóctel", value=True)
     
     with col2:
         if buscar and ingredientes_input:
@@ -453,6 +546,13 @@ with tabs[1]:
             
             if resultados:
                 for receta in resultados:
+                    # Generar imagen si está activado
+                    if generar_img:
+                        with st.spinner(f"🎨 Generando imagen de {receta['nombre']}..."):
+                            imagen_bytes = generar_imagen_coctel(receta['imagen_prompt'], receta['nombre'])
+                            if imagen_bytes:
+                                st.image(imagen_bytes, caption=f"🎨 {receta['nombre']} - Generado con IA", use_column_width=True)
+                    
                     st.markdown(f"""
                     <div class="recipe-card">
                         <h3 style="color: #D4A017 !important; margin-bottom: 0.5rem;">{receta['nombre']}</h3>
@@ -494,7 +594,7 @@ with tabs[2]:
         <div class="card-elegant">
             <h3 class="card-title">Machine Learning aplicado a mixología</h3>
             <p class="card-text">
-            Nuestro modelo de <b>Regresión Lineal</b> predice la dificultad 
+            Nuestro modelo de <b style="color: #D4A017 !important;">Regresión Lineal</b> predice la dificultad 
             de un cóctel (escala 1-5) basado en:
             </p>
             <ul style="color: #e0e0e0 !important;">
@@ -503,7 +603,7 @@ with tabs[2]:
                 <li>Número de técnicas requeridas</li>
             </ul>
             <p class="card-text">
-            <b>Precisión del modelo (R²): 66.9%</b><br>
+            <b style="color: #D4A017 !important;">Precisión del modelo (R²): 66.9%</b><br>
             Dataset: 40 cócteles reales
             </p>
         </div>
@@ -733,10 +833,10 @@ with tabs[6]:
         <div class="card-elegant">
             <h3 style="color: #D4A017 !important;">💎 Valores</h3>
             <p class="card-text">
-            • <b>Innovación:</b> Tecnología al servicio del arte<br>
-            • <b>Accesibilidad:</b> Mixología para todos<br>
-            • <b>Calidad:</b> Recetas probadas y precisas<br>
-            • <b>Comunidad:</b> Compartir conocimiento
+            • <b style="color: #D4A017 !important;">Innovación:</b> Tecnología al servicio del arte<br>
+            • <b style="color: #D4A017 !important;">Accesibilidad:</b> Mixología para todos<br>
+            • <b style="color: #D4A017 !important;">Calidad:</b> Recetas probadas y precisas<br>
+            • <b style="color: #D4A017 !important;">Comunidad:</b> Compartir conocimiento
             </p>
         </div>
         """, unsafe_allow_html=True)
@@ -747,9 +847,9 @@ with tabs[6]:
             <h3 style="color: #D4A017 !important;">📬 Contacto</h3>
             <p class="card-text">
             ¿Tienes dudas, sugerencias o quieres colaborar?<br><br>
-            📧 <b>Email:</b> hola@cocktailgenius.ai<br>
-            🕐 <b>Horario:</b> Lunes a Viernes, 9:00 - 18:00<br>
-            📱 <b>WhatsApp:</b> Próximamente<br>
+            📧 <b style="color: #D4A017 !important;">Email:</b> hola@cocktailgenius.ai<br>
+            🕐 <b style="color: #D4A017 !important;">Horario:</b> Lunes a Viernes, 9:00 - 18:00<br>
+            📱 <b style="color: #D4A017 !important;">WhatsApp:</b> Próximamente<br>
             </p>
         </div>
         """, unsafe_allow_html=True)
