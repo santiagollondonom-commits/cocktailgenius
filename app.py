@@ -695,34 +695,43 @@ with tabs[1]:
                 for idx, receta in enumerate(resultados):
                     mostrar_imagen_coctel(receta, key_suffix=f"gen_{idx}")
 
-                    tags_html = "".join([
-                        f'<span class="ingredient-tag">{ing}: {medida}</span>'
-                        for ing, medida in receta['medidas'].items()
-                    ])
+                    st.markdown(f'<h3 style="color:#D4A017;margin-top:0.8rem;">{receta["nombre"]}</h3>', unsafe_allow_html=True)
+                    st.markdown(
+                        f'<p style="color:#888;font-size:0.9rem;">⏱️ {receta["tiempo"]} min | ' +
+                        "⭐" * receta["dificultad"] + "☆" * (5 - receta["dificultad"]) +
+                        f' | Dificultad: {receta["dificultad"]}/5</p>',
+                        unsafe_allow_html=True
+                    )
 
-                    pasos_html = "".join([
-                        f'<div style="display:flex;align-items:flex-start;margin:0.5rem 0;">'
-                        f'<span class="step-number">{i}</span>'
-                        f'<span style="color:#e0e0e0;">{paso}</span></div>'
-                        for i, paso in enumerate(receta['preparacion'], 1)
+                    # Ingredientes como tags
+                    st.markdown('<h4 style="color:#F4D03F;margin-top:1rem;">🧪 Ingredientes y medidas:</h4>', unsafe_allow_html=True)
+                    tags = " ".join([
+                        f'<span style="display:inline-block;background:rgba(212,160,23,0.2);color:#D4A017;' +
+                        f'padding:0.25rem 0.7rem;border-radius:15px;margin:0.2rem;font-size:0.9rem;">{ing}: {medida}</span>'
+                        for ing, medida in receta["medidas"].items()
                     ])
+                    st.markdown(tags, unsafe_allow_html=True)
 
-                    st.markdown(f"""
-                    <div class="recipe-card">
-                        <h3 style="color:#D4A017;margin-bottom:0.5rem;">{receta['nombre']}</h3>
-                        <p style="color:#888;font-size:0.9rem;">
-                        ⏱️ {receta['tiempo']} min | {"⭐" * receta['dificultad']}{"☆" * (5-receta['dificultad'])} | Dificultad: {receta['dificultad']}/5
-                        </p>
-                        <h4 style="color:#F4D03F;margin-top:1rem;">🧪 Ingredientes y medidas:</h4>
-                        <div style="margin-bottom:0.5rem;">{tags_html}</div>
-                        <h4 style="color:#F4D03F;margin-top:1rem;">👨‍🍳 Preparación paso a paso:</h4>
-                        {pasos_html}
-                        <div class="result-box" style="margin-top:1rem;">
-                            <b style="color:#D4A017;">💡 Tip profesional:</b>
-                            <span style="color:#e0e0e0;">{receta['tips']}</span>
-                        </div>
-                    </div>
-                    """, unsafe_allow_html=True)
+                    # Pasos de preparación
+                    st.markdown('<h4 style="color:#F4D03F;margin-top:1rem;">👨‍🍳 Preparación paso a paso:</h4>', unsafe_allow_html=True)
+                    for i, paso in enumerate(receta["preparacion"], 1):
+                        st.markdown(
+                            f'<div style="display:flex;align-items:flex-start;margin:0.4rem 0;">' +
+                            f'<span style="display:inline-flex;align-items:center;justify-content:center;' +
+                            f'width:26px;height:26px;min-width:26px;background:#D4A017;color:#000;' +
+                            f'border-radius:50%;font-weight:bold;margin-right:0.8rem;">{i}</span>' +
+                            f'<span style="color:#e0e0e0;">{paso}</span></div>',
+                            unsafe_allow_html=True
+                        )
+
+                    # Tip
+                    st.markdown(
+                        f'<div style="background:rgba(212,160,23,0.15);border-left:4px solid #D4A017;' +
+                        f'padding:1rem 1.2rem;border-radius:8px;margin-top:1rem;margin-bottom:2rem;">' +
+                        f'<b style="color:#D4A017;">💡 Tip profesional:</b> ' +
+                        f'<span style="color:#e0e0e0;">{receta["tips"]}</span></div>',
+                        unsafe_allow_html=True
+                    )
             else:
                 st.error("😕 No encontramos recetas con esos ingredientes. Prueba con: ron, tequila, vodka, gin, lima, menta, piña...")
         else:
@@ -832,47 +841,41 @@ with tabs[3]:
     with col2:
         if calcular:
             receta = RECETAS_DB[receta_seleccionada]
-
-            # MOSTRAR IMAGEN DEL CÓCTEL SELECCIONADO
             mostrar_imagen_coctel(receta, key_suffix="calc")
-
             medidas_nuevas = calcular_porciones(receta, num_personas)
 
-            # Construir filas de medidas
-            filas_medidas = "".join([
-                f'<div style="display:flex;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid rgba(255,255,255,0.1);">'
-                f'<span style="color:#e0e0e0;">{ing}</span>'
-                f'<span style="color:#D4A017;font-weight:bold;">{medida}</span></div>'
-                for ing, medida in medidas_nuevas.items()
-            ])
+            # Encabezado
+            st.markdown(f'<h3 style="color:#D4A017;margin-top:1rem;">{receta["nombre"]} — {num_personas} personas</h3>', unsafe_allow_html=True)
+            st.markdown(f'<p style="color:#888;">⏱️ {receta["tiempo"]} min por preparación | {"⭐" * receta["dificultad"]}</p>', unsafe_allow_html=True)
 
-            # Construir pasos de preparación
-            pasos_html = "".join([
-                f'<div style="display:flex;align-items:flex-start;margin:0.5rem 0;">'
-                f'<span class="step-number">{i}</span>'
-                f'<span style="color:#e0e0e0;">{paso}</span></div>'
-                for i, paso in enumerate(receta['preparacion'], 1)
-            ])
+            # Medidas
+            st.markdown('<h4 style="color:#F4D03F;margin-top:1rem;">🧪 Medidas ajustadas:</h4>', unsafe_allow_html=True)
+            for ing, medida in medidas_nuevas.items():
+                c1, c2 = st.columns([3, 1])
+                c1.markdown(f'<span style="color:#e0e0e0;">{ing}</span>', unsafe_allow_html=True)
+                c2.markdown(f'<span style="color:#D4A017;font-weight:bold;">{medida}</span>', unsafe_allow_html=True)
+                st.markdown('<hr style="margin:0;border-color:rgba(255,255,255,0.1);">', unsafe_allow_html=True)
 
-            st.markdown(f"""
-            <div class="recipe-card">
-                <h3 style="color:#D4A017;">{receta['nombre']} — {num_personas} personas</h3>
-                <p style="color:#888;">⏱️ {receta['tiempo']} min por preparación | {"⭐" * receta['dificultad']}</p>
+            # Preparación
+            st.markdown('<h4 style="color:#F4D03F;margin-top:1.5rem;">👨‍🍳 Preparación:</h4>', unsafe_allow_html=True)
+            for i, paso in enumerate(receta['preparacion'], 1):
+                st.markdown(
+                    f'<div style="display:flex;align-items:flex-start;margin:0.4rem 0;">' +
+                    f'<span style="display:inline-flex;align-items:center;justify-content:center;' +
+                    f'width:26px;height:26px;background:#D4A017;color:#000;border-radius:50%;' +
+                    f'font-weight:bold;margin-right:0.8rem;flex-shrink:0;">{i}</span>' +
+                    f'<span style="color:#e0e0e0;">{paso}</span></div>',
+                    unsafe_allow_html=True
+                )
 
-                <h4 style="color:#F4D03F;margin-top:1rem;">🧪 Medidas ajustadas:</h4>
-                {filas_medidas}
-
-                <h4 style="color:#F4D03F;margin-top:1.5rem;">👨‍🍳 Preparación:</h4>
-                {pasos_html}
-
-                <div class="result-box" style="margin-top:1rem;">
-                    <b style="color:#D4A017;">💡 Tip:</b>
-                    <span style="color:#e0e0e0;">{receta['tips']}</span><br><br>
-                    <b style="color:#D4A017;">📊 Total estimado:</b>
-                    <span style="color:#e0e0e0;">{num_personas * receta['tiempo']} minutos en total</span>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
+            # Tip y total
+            st.markdown(
+                f'<div style="background:rgba(212,160,23,0.15);border-left:4px solid #D4A017;' +
+                f'padding:1rem 1.2rem;border-radius:8px;margin-top:1rem;">' +
+                f'<b style="color:#D4A017;">💡 Tip:</b> <span style="color:#e0e0e0;">{receta["tips"]}</span><br><br>' +
+                f'<b style="color:#D4A017;">📊 Total estimado:</b> <span style="color:#e0e0e0;">{num_personas * receta["tiempo"]} minutos en total</span></div>',
+                unsafe_allow_html=True
+            )
 
 # ============================================
 # TAB 5: CÁTEDRA DE CATA
@@ -932,7 +935,52 @@ with tabs[4]:
         </div>
         """, unsafe_allow_html=True)
 
-    st.info("🔒 Acceso exclusivo para miembros premium. Únete a la lista de espera.")
+    st.markdown("---")
+
+    col_left, col_center, col_right = st.columns([1, 2, 1])
+    with col_center:
+        st.markdown("""
+        <div class="card-elegant" style="text-align:center;">
+            <h3 style="color:#D4A017;">🔔 ¿Quieres ser el primero en acceder?</h3>
+            <p class="card-text">
+            Únete a la lista de espera y te avisaremos en cuanto lancemos la Cátedra de Cata.<br>
+            Los primeros 100 inscritos obtendrán <b style="color:#D4A017;">1 mes gratis</b>.
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+
+        with st.form("lista_espera"):
+            ws_nombre = st.text_input("Nombre completo", placeholder="Ej: Juan García")
+            ws_email  = st.text_input("Correo electrónico", placeholder="juan@email.com")
+            ws_modulo = st.selectbox("¿Qué módulo te interesa más?",
+                                     ["Ron", "Whisky", "Gin", "Todos por igual"])
+            ws_nivel  = st.selectbox("Tu nivel actual en coctelería",
+                                     ["Principiante", "Intermedio", "Avanzado"])
+            enviado_ws = st.form_submit_button("🎓 Unirme a la lista de espera", use_container_width=True)
+
+        if enviado_ws:
+            if ws_nombre and ws_email:
+                import datetime
+                N8N_WEBHOOK_CATEDRAL = "TU_WEBHOOK_URL_LISTA_ESPERA"
+                payload = {
+                    "nombre": ws_nombre,
+                    "email":  ws_email,
+                    "modulo": ws_modulo,
+                    "nivel":  ws_nivel,
+                    "fuente": "Lista de Espera - Cátedra de Cata",
+                    "fecha":  datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+                }
+                try:
+                    r = requests.post(N8N_WEBHOOK_CATEDRAL, json=payload, timeout=8)
+                    if r.status_code in (200, 201):
+                        st.success(f"✅ ¡{ws_nombre}, ya estás en la lista! Te avisaremos a {ws_email} en cuanto lancemos.")
+                        st.balloons()
+                    else:
+                        st.warning("⚠️ Hubo un problema al guardar. Intenta de nuevo.")
+                except Exception:
+                    st.warning("⚠️ No se pudo conectar con el servidor. Intenta más tarde.")
+            else:
+                st.error("❌ Por favor completa nombre y correo antes de enviar.")
 
 # ============================================
 # TAB 6: CHATBOT
@@ -1016,14 +1064,34 @@ with tabs[6]:
 
         st.subheader("✉️ Envíanos un mensaje")
         with st.form("contacto"):
-            nombre = st.text_input("Nombre completo")
-            email = st.text_input("Correo electrónico")
-            asunto = st.selectbox("Asunto", ["Consulta general", "Soporte técnico", "Partnerships", "Feedback"])
-            mensaje = st.text_area("Mensaje", height=100)
+            nombre  = st.text_input("Nombre completo", placeholder="Tu nombre")
+            email   = st.text_input("Correo electrónico", placeholder="tu@email.com")
+            asunto  = st.selectbox("Asunto", ["Consulta general", "Soporte técnico", "Partnerships", "Feedback"])
+            mensaje = st.text_area("Mensaje", height=100, placeholder="Escribe tu mensaje aquí...")
+            enviado_contacto = st.form_submit_button("📨 Enviar mensaje", use_container_width=True)
 
-            if st.form_submit_button("📨 Enviar mensaje", use_container_width=True):
-                st.success("✅ ¡Mensaje enviado! Te responderemos en menos de 24 horas.")
-                st.info("💡 En producción: este mensaje se guarda automáticamente en Google Sheets vía n8n")
+        if enviado_contacto:
+            if nombre and email and mensaje:
+                import datetime
+                N8N_WEBHOOK_CONTACTO = "TU_WEBHOOK_URL_CONTACTO"
+                payload = {
+                    "nombre":  nombre,
+                    "email":   email,
+                    "asunto":  asunto,
+                    "mensaje": mensaje,
+                    "fuente":  "Formulario Contacto - Nosotros",
+                    "fecha":   datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+                }
+                try:
+                    r = requests.post(N8N_WEBHOOK_CONTACTO, json=payload, timeout=8)
+                    if r.status_code in (200, 201):
+                        st.success("✅ ¡Mensaje enviado! Te responderemos en menos de 24 horas.")
+                    else:
+                        st.warning("⚠️ Hubo un problema al enviar. Intenta de nuevo.")
+                except Exception:
+                    st.warning("⚠️ No se pudo conectar con el servidor. Intenta más tarde.")
+            else:
+                st.error("❌ Por favor completa nombre, correo y mensaje antes de enviar.")
 
 # ============================================
 # FOOTER
