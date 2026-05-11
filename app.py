@@ -61,14 +61,25 @@ st.markdown("""
     div[data-baseweb="menu"] li,
     div[data-baseweb="menu"] div,
     ul[role="listbox"] li,
-    [role="option"] {
+    [role="option"],
+    div[data-baseweb="popover"] li,
+    div[data-baseweb="popover"] div,
+    div[data-baseweb="menu"] [role="option"],
+    div[data-baseweb="select"] [role="option"] {
         color: #1a1a2e !important;
         background: #ffffff !important;
     }
 
     div[data-baseweb="menu"] li:hover,
-    [role="option"]:hover {
-        background: #f0f0f0 !important;
+    [role="option"]:hover,
+    div[data-baseweb="popover"] li:hover {
+        background: #f0e8c8 !important;
+        color: #1a1a2e !important;
+    }
+
+    /* Texto seleccionado visible en el selectbox cerrado */
+    div[data-baseweb="select"] > div > div,
+    div[data-baseweb="select"] span {
         color: #1a1a2e !important;
     }
 
@@ -447,72 +458,64 @@ RECETAS_DB = {
 
 # ============================================
 # FUNCIÓN PARA GENERAR IMÁGENES CON POLLINATIONS.AI
+# Descarga los bytes primero para evitar errores de carga
 # ============================================
 def generar_imagen_url(prompt, nombre_coctel, seed=None):
-    """
-    Genera URL de imagen usando Pollinations.ai (gratis, sin API key)
-    La imagen se genera en tiempo real cuando se carga la URL
-    """
+    """Genera URL de imagen usando Pollinations.ai (gratis, sin API key)"""
     try:
-        # Usar seed única por cóctel para consistencia, o aleatoria para variedad
         if seed is None:
             seed = hash(nombre_coctel) % 10000
-
-        # Codificar el prompt para URL
         prompt_encoded = urllib.parse.quote(prompt)
-
-        # Construir URL de Pollinations con parámetros optimizados
-        url = f"https://image.pollinations.ai/prompt/{prompt_encoded}?width=512&height=512&nologo=true&seed={seed}&enhance=true&negative_prompt=text,watermark,blurry,low quality"
-
+        url = (
+            f"https://image.pollinations.ai/prompt/{prompt_encoded}"
+            f"?width=512&height=512&nologo=true&seed={seed}"
+            f"&model=flux&negative_prompt=text,watermark,blurry,low+quality"
+        )
         return url
     except Exception as e:
-        st.error(f"Error generando imagen: {str(e)}")
         return None
+
+def descargar_imagen(url, timeout=25):
+    """Descarga la imagen como bytes desde la URL con reintentos"""
+    for intento in range(2):
+        try:
+            resp = requests.get(url, timeout=timeout, stream=True)
+            if resp.status_code == 200 and len(resp.content) > 1000:
+                return resp.content
+        except Exception:
+            time.sleep(2)
+    return None
 
 # ============================================
 # FUNCIÓN PARA MOSTRAR IMAGEN CON MANEJO DE ERRORES
 # ============================================
 def mostrar_imagen_coctel(receta, key_suffix=""):
     """
-    Muestra la imagen del cóctel con:
-    - Spinner de carga
-    - Manejo de errores si la imagen no carga
+    Muestra la imagen del cóctel:
+    - Descarga bytes via requests (más confiable que URL directa)
+    - Spinner mientras genera
     - Placeholder elegante como fallback
     """
     nombre = receta['nombre']
     prompt = receta['imagen_prompt']
 
-    # Crear contenedor para la imagen
-    image_container = st.container()
+    with st.spinner(f"🎨 Generando imagen de {nombre} con IA..."):
+        imagen_url = generar_imagen_url(prompt, nombre)
+        imagen_bytes = descargar_imagen(imagen_url) if imagen_url else None
 
-    with image_container:
-        # Spinner mientras "carga" (la imagen se genera en tiempo real)
-        with st.spinner(f"🎨 Generando imagen de {nombre} con IA..."):
-            # Pequeña pausa para efecto visual (la imagen ya se genera en tiempo real)
-            time.sleep(0.5)
-
-            # Generar URL de la imagen
-            imagen_url = generar_imagen_url(prompt, nombre)
-
-            if imagen_url:
-                # Mostrar imagen desde URL con manejo de errores
-                try:
-                    st.image(
-                        imagen_url, 
-                        caption=f"🎨 {nombre} — Imagen generada con IA en tiempo real",
-                        use_container_width=True,
-                        output_format="auto"
-                    )
-                    st.markdown(
-                        '<p style="color: #888; font-size: 0.8rem; text-align: center;">'
-                        '🤖 Generado por IA • Cada imagen es única</p>', 
-                        unsafe_allow_html=True
-                    )
-                except Exception as e:
-                    # Si falla la carga de la imagen, mostrar placeholder
-                    mostrar_placeholder_imagen(nombre)
-            else:
-                mostrar_placeholder_imagen(nombre)
+        if imagen_bytes:
+            st.image(
+                imagen_bytes,
+                caption=f"🎨 {nombre} — Generado con IA (Pollinations.ai)",
+                use_container_width=True
+            )
+            st.markdown(
+                '<p style="color:#888;font-size:0.78rem;text-align:center;">'
+                '🤖 Imagen única generada en tiempo real con IA</p>',
+                unsafe_allow_html=True
+            )
+        else:
+            mostrar_placeholder_imagen(nombre)
 
 def mostrar_placeholder_imagen(nombre_coctel):
     """
@@ -569,8 +572,10 @@ with col2:
     header_col1, header_col2 = st.columns([1, 3])
 
     with header_col1:
-        # Logo emoji como fallback - NO requiere archivo local
-        st.markdown("<div style='font-size: 4rem; text-align: right;'>🍹</div>", unsafe_allow_html=True)
+        try:
+            st.image("logo.png", width=110)
+        except:
+            st.markdown("<div style='font-size: 4rem; text-align: right;'>🍹</div>", unsafe_allow_html=True)
 
     with header_col2:
         st.markdown('<div class="main-title" style="text-align: left; margin-top: 0.5rem;">CocktailGenius</div>', unsafe_allow_html=True)
@@ -625,8 +630,11 @@ with tabs[0]:
         </div>
         """, unsafe_allow_html=True)
 
-        # Placeholder para video - NO requiere archivo local
-        st.info("📹 Aquí irá tu video MP4 de 27 segundos (puedes subirlo a YouTube y embeberlo)")
+        # VIDEO COMERCIAL
+        try:
+            st.video("video.mp4")
+        except:
+            st.info("📹 Video comercial (27 seg) — sube video.mp4 al repositorio")
 
 # ============================================
 # TAB 2: GENRECETA IA - CON IMÁGENES GENERADAS AUTOMÁTICAMENTE
