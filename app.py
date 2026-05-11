@@ -1,9 +1,11 @@
-import streamlit as st
+
+code = '''import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 import requests
 import urllib.parse
+import time
 
 # ============================================
 # CONFIGURACIÓN DE PÁGINA
@@ -17,6 +19,7 @@ st.set_page_config(
 
 # ============================================
 # CSS PERSONALIZADO - FONDO OSCURO + TEXTO BLANCO
+# CORRECCIÓN: Texto negro en componentes de formulario con fondo claro
 # ============================================
 st.markdown("""
 <style>
@@ -24,10 +27,77 @@ st.markdown("""
         background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
     }
     
+    /* Texto general en blanco */
     .stApp, p, h1, h2, h3, h4, h5, h6, div, span, label, li {
         color: #ffffff !important;
     }
     
+    /* ============================================
+       CORRECCIÓN 1: SELECTBOX, NUMBER_INPUT, TEXT_INPUT
+       Texto NEGRO para que se vea en fondo claro
+       ============================================ */
+    .stSelectbox > div > div > div,
+    .stNumberInput > div > div > input,
+    .stTextInput > div > div > input,
+    .stTextArea > div > div > textarea,
+    div[data-baseweb="select"] div,
+    div[data-baseweb="input"] input,
+    div[data-baseweb="textarea"] textarea,
+    div[data-testid="stSelectbox"] div[data-baseweb="select"] > div,
+    [data-testid="stNumberInput"] input {
+        color: #1a1a2e !important;
+        background: #ffffff !important;
+        font-weight: 500 !important;
+    }
+    
+    /* Placeholder en gris oscuro */
+    ::placeholder {
+        color: #666666 !important;
+        opacity: 1 !important;
+    }
+    
+    /* ============================================
+       CORRECCIÓN 2: OPCIONES DEL DROPDOWN (selectbox)
+       ============================================ */
+    div[data-baseweb="menu"] li,
+    div[data-baseweb="menu"] div,
+    ul[role="listbox"] li,
+    [role="option"] {
+        color: #1a1a2e !important;
+        background: #ffffff !important;
+    }
+    
+    div[data-baseweb="menu"] li:hover,
+    [role="option"]:hover {
+        background: #f0f0f0 !important;
+        color: #1a1a2e !important;
+    }
+    
+    /* ============================================
+       CORRECCIÓN 3: LABELS DE FORMULARIO
+       Mantener blanco para que se vean en fondo oscuro
+       ============================================ */
+    .stSelectbox label,
+    .stNumberInput label,
+    .stTextInput label,
+    .stTextArea label,
+    [data-testid="stForm"] label {
+        color: #ffffff !important;
+        font-weight: 600 !important;
+    }
+    
+    /* ============================================
+       CORRECCIÓN 4: BOTONES DE +/- EN NUMBER_INPUT
+       ============================================ */
+    button[kind="secondary"] {
+        color: #1a1a2e !important;
+        background: #e0e0e0 !important;
+        border: 1px solid #cccccc !important;
+    }
+    
+    /* ============================================
+       TÍTULOS Y ESTILOS EXISTENTES (sin cambios)
+       ============================================ */
     .main-title {
         font-size: 3.5rem;
         font-weight: bold;
@@ -134,12 +204,9 @@ st.markdown("""
         box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }
     
+    /* Input de búsqueda de ingredientes - mantener estilo dorado */
     .stTextInput > div > div > input,
-    .stNumberInput > div > div > input,
-    .stSelectbox > div > div > div,
-    .stTextArea > div > div > textarea,
-    div[data-baseweb="input"] input,
-    div[data-baseweb="textarea"] textarea {
+    div[data-baseweb="input"] input {
         background: rgba(30, 30, 50, 0.9) !important;
         color: #ffffff !important;
         border: 2px solid #D4A017 !important;
@@ -148,9 +215,9 @@ st.markdown("""
         font-size: 1rem !important;
     }
     
-    ::placeholder {
+    /* Placeholder del input de búsqueda */
+    .stTextInput ::placeholder {
         color: #888888 !important;
-        opacity: 1 !important;
     }
     
     .stSlider > div > div > div > div {
@@ -225,6 +292,25 @@ st.markdown("""
         background: rgba(231,76,60,0.2) !important;
         border: 1px solid #e74c3c !important;
         color: white !important;
+    }
+    
+    /* Estilos para placeholder de imagen */
+    .image-placeholder {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        border: 2px dashed rgba(212,160,23,0.5);
+        border-radius: 15px;
+        padding: 3rem;
+        text-align: center;
+        color: #D4A017 !important;
+    }
+    
+    .image-loading {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        color: #D4A017 !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -363,17 +449,21 @@ RECETAS_DB = {
 # ============================================
 # FUNCIÓN PARA GENERAR IMÁGENES CON POLLINATIONS.AI
 # ============================================
-def generar_imagen_url(prompt, nombre_coctel):
+def generar_imagen_url(prompt, nombre_coctel, seed=None):
     """
     Genera URL de imagen usando Pollinations.ai (gratis, sin API key)
     La imagen se genera en tiempo real cuando se carga la URL
     """
     try:
+        # Usar seed única por cóctel para consistencia, o aleatoria para variedad
+        if seed is None:
+            seed = hash(nombre_coctel) % 10000
+        
         # Codificar el prompt para URL
         prompt_encoded = urllib.parse.quote(prompt)
         
-        # Construir URL de Pollinations
-        url = f"https://image.pollinations.ai/prompt/{prompt_encoded}?width=512&height=512&nologo=true&seed=42&enhance=true"
+        # Construir URL de Pollinations con parámetros optimizados
+        url = f"https://image.pollinations.ai/prompt/{prompt_encoded}?width=512&height=512&nologo=true&seed={seed}&enhance=true&negative_prompt=text,watermark,blurry,low quality"
         
         return url
     except Exception as e:
@@ -381,23 +471,63 @@ def generar_imagen_url(prompt, nombre_coctel):
         return None
 
 # ============================================
-# FUNCIÓN PARA MOSTRAR IMAGEN CON SPINNER
+# FUNCIÓN PARA MOSTRAR IMAGEN CON MANEJO DE ERRORES
 # ============================================
-def mostrar_imagen_coctel(receta):
-    """Muestra la imagen del cóctel con indicador de carga"""
-    with st.spinner(f"🎨 Generando imagen de {receta['nombre']} con IA..."):
-        # Generar URL de la imagen
-        imagen_url = generar_imagen_url(receta['imagen_prompt'], receta['nombre'])
-        
-        if imagen_url:
-            # Mostrar imagen desde URL
-            st.image(
-                imagen_url, 
-                caption=f"🎨 {receta['nombre']} — Imagen generada con IA en tiempo real",
-                use_column_width=True,
-                output_format="auto"
-            )
-            st.markdown('<p style="color: #888; font-size: 0.8rem; text-align: center;">🤖 Generado por IA • Cada imagen es única</p>', unsafe_allow_html=True)
+def mostrar_imagen_coctel(receta, key_suffix=""):
+    """
+    Muestra la imagen del cóctel con:
+    - Spinner de carga
+    - Manejo de errores si la imagen no carga
+    - Placeholder elegante como fallback
+    """
+    nombre = receta['nombre']
+    prompt = receta['imagen_prompt']
+    
+    # Crear contenedor para la imagen
+    image_container = st.container()
+    
+    with image_container:
+        # Spinner mientras "carga" (la imagen se genera en tiempo real)
+        with st.spinner(f"🎨 Generando imagen de {nombre} con IA..."):
+            # Pequeña pausa para efecto visual (la imagen ya se genera en tiempo real)
+            time.sleep(0.5)
+            
+            # Generar URL de la imagen
+            imagen_url = generar_imagen_url(prompt, nombre)
+            
+            if imagen_url:
+                # Mostrar imagen desde URL con manejo de errores
+                try:
+                    st.image(
+                        imagen_url, 
+                        caption=f"🎨 {nombre} — Imagen generada con IA en tiempo real",
+                        use_container_width=True,
+                        output_format="auto"
+                    )
+                    st.markdown(
+                        '<p style="color: #888; font-size: 0.8rem; text-align: center;">'
+                        '🤖 Generado por IA • Cada imagen es única</p>', 
+                        unsafe_allow_html=True
+                    )
+                except Exception as e:
+                    # Si falla la carga de la imagen, mostrar placeholder
+                    mostrar_placeholder_imagen(nombre)
+            else:
+                mostrar_placeholder_imagen(nombre)
+
+def mostrar_placeholder_imagen(nombre_coctel):
+    """
+    Muestra un placeholder elegante si la imagen no carga
+    """
+    st.markdown(f"""
+    <div class="image-placeholder">
+        <div style="font-size: 4rem; margin-bottom: 1rem;">🍹</div>
+        <h3 style="color: #D4A017 !important; margin-bottom: 0.5rem;">{nombre_coctel}</h3>
+        <p style="color: #888 !important; font-size: 0.9rem;">
+            Imagen generada por IA<br>
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
 
 # ============================================
 # FUNCIONES AUXILIARES
@@ -440,10 +570,8 @@ with col2:
     header_col1, header_col2 = st.columns([1, 3])
     
     with header_col1:
-        try:
-            st.image("logo.png", width=100, use_column_width=False)
-        except:
-            st.markdown("<div style='font-size: 4rem; text-align: right;'>🍹</div>", unsafe_allow_html=True)
+        # Logo emoji como fallback - NO requiere archivo local
+        st.markdown("<div style='font-size: 4rem; text-align: right;'>🍹</div>", unsafe_allow_html=True)
     
     with header_col2:
         st.markdown('<div class="main-title" style="text-align: left; margin-top: 0.5rem;">CocktailGenius</div>', unsafe_allow_html=True)
@@ -498,10 +626,8 @@ with tabs[0]:
         </div>
         """, unsafe_allow_html=True)
         
-        try:
-            st.video("video.mp4")
-        except:
-            st.info("📹 Aquí irá tu video MP4 de 27 segundos")
+        # Placeholder para video - NO requiere archivo local
+        st.info("📹 Aquí irá tu video MP4 de 27 segundos (puedes subirlo a YouTube y embeberlo)")
 
 # ============================================
 # TAB 2: GENRECETA IA - CON IMÁGENES GENERADAS AUTOMÁTICAMENTE
@@ -537,7 +663,7 @@ with tabs[1]:
         <div style="background: rgba(212,160,23,0.1); border-radius: 10px; padding: 1rem; margin-top: 1rem;">
             <p style="color: #D4A017 !important; font-size: 0.9rem; margin: 0;">
             🎨 <b>Imágenes generadas con IA</b><br>
-            Cada receta incluye una imagen única creada por inteligencia artificial en tiempo real.
+            Cada receta incluye una imagen única creada por inteligencia artificial en tiempo real usando Pollinations.ai (gratis, sin API key).
             </p>
         </div>
         """, unsafe_allow_html=True)
@@ -547,9 +673,9 @@ with tabs[1]:
             resultados = buscar_receta(ingredientes_input)
             
             if resultados:
-                for receta in resultados:
-                    # MOSTRAR IMAGEN GENERADA CON IA
-                    mostrar_imagen_coctel(receta)
+                for idx, receta in enumerate(resultados):
+                    # MOSTRAR IMAGEN GENERADA CON IA - ÚNICA POR RECETA
+                    mostrar_imagen_coctel(receta, key_suffix=f"gen_{idx}")
                     
                     st.markdown(f"""
                     <div class="recipe-card">
@@ -648,7 +774,7 @@ with tabs[2]:
         st.pyplot(fig)
 
 # ============================================
-# TAB 4: CALCULADORA DE DOSIS - CON IMÁGEN
+# TAB 4: CALCULADORA DE DOSIS - CON IMÁGENES GENERADAS
 # ============================================
 with tabs[3]:
     st.markdown('<div class="section-title">🧮 Calculadora de Dosis</div>', unsafe_allow_html=True)
@@ -684,8 +810,8 @@ with tabs[3]:
         if calcular:
             receta = RECETAS_DB[receta_seleccionada]
             
-            # MOSTRAR IMAGEN DEL CÓCTEL SELECCIONADO
-            mostrar_imagen_coctel(receta)
+            # MOSTRAR IMAGEN DEL CÓCTEL SELECCIONADO - GENERADA EN TIEMPO REAL
+            mostrar_imagen_coctel(receta, key_suffix="calc")
             
             medidas_nuevas = calcular_porciones(receta, num_personas)
             
@@ -878,3 +1004,11 @@ st.markdown("""
     </p>
 </div>
 """, unsafe_allow_html=True)
+'''
+
+# Save to file
+with open('/mnt/agents/output/app.py', 'w', encoding='utf-8') as f:
+    f.write(code)
+
+print("✅ Archivo guardado correctamente")
+print(f"📄 Tamaño: {len(code)} caracteres")
