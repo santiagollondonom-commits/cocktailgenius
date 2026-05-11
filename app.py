@@ -693,29 +693,33 @@ with tabs[1]:
 
             if resultados:
                 for idx, receta in enumerate(resultados):
-                    # MOSTRAR IMAGEN GENERADA CON IA - ÚNICA POR RECETA
                     mostrar_imagen_coctel(receta, key_suffix=f"gen_{idx}")
+
+                    tags_html = "".join([
+                        f'<span class="ingredient-tag">{ing}: {medida}</span>'
+                        for ing, medida in receta['medidas'].items()
+                    ])
+
+                    pasos_html = "".join([
+                        f'<div style="display:flex;align-items:flex-start;margin:0.5rem 0;">'
+                        f'<span class="step-number">{i}</span>'
+                        f'<span style="color:#e0e0e0;">{paso}</span></div>'
+                        for i, paso in enumerate(receta['preparacion'], 1)
+                    ])
 
                     st.markdown(f"""
                     <div class="recipe-card">
-                        <h3 style="color: #D4A017 !important; margin-bottom: 0.5rem;">{receta['nombre']}</h3>
-                        <p style="color: #888 !important; font-size: 0.9rem;">
+                        <h3 style="color:#D4A017;margin-bottom:0.5rem;">{receta['nombre']}</h3>
+                        <p style="color:#888;font-size:0.9rem;">
                         ⏱️ {receta['tiempo']} min | {"⭐" * receta['dificultad']}{"☆" * (5-receta['dificultad'])} | Dificultad: {receta['dificultad']}/5
                         </p>
-
-                        <h4 style="color: #F4D03F !important; margin-top: 1rem;">🧪 Ingredientes y medidas:</h4>
-                    """, unsafe_allow_html=True)
-
-                    for ing, medida in receta['medidas'].items():
-                        st.markdown(f'<span class="ingredient-tag">{ing}: {medida}</span>', unsafe_allow_html=True)
-
-                    st.markdown("<h4 style='color: #F4D03F !important; margin-top: 1rem;'>👨‍🍳 Preparación paso a paso:</h4>", unsafe_allow_html=True)
-                    for i, paso in enumerate(receta['preparacion'], 1):
-                        st.markdown(f'<div style="display: flex; align-items: start; margin: 0.5rem 0;"><span class="step-number">{i}</span><span style="color: #e0e0e0 !important;">{paso}</span></div>', unsafe_allow_html=True)
-
-                    st.markdown(f"""
-                        <div class="result-box" style="margin-top: 1rem;">
-                            <b style="color: #D4A017 !important;">💡 Tip profesional:</b> <span style="color: #e0e0e0 !important;">{receta['tips']}</span>
+                        <h4 style="color:#F4D03F;margin-top:1rem;">🧪 Ingredientes y medidas:</h4>
+                        <div style="margin-bottom:0.5rem;">{tags_html}</div>
+                        <h4 style="color:#F4D03F;margin-top:1rem;">👨‍🍳 Preparación paso a paso:</h4>
+                        {pasos_html}
+                        <div class="result-box" style="margin-top:1rem;">
+                            <b style="color:#D4A017;">💡 Tip profesional:</b>
+                            <span style="color:#e0e0e0;">{receta['tips']}</span>
                         </div>
                     </div>
                     """, unsafe_allow_html=True)
@@ -829,33 +833,43 @@ with tabs[3]:
         if calcular:
             receta = RECETAS_DB[receta_seleccionada]
 
-            # MOSTRAR IMAGEN DEL CÓCTEL SELECCIONADO - GENERADA EN TIEMPO REAL
+            # MOSTRAR IMAGEN DEL CÓCTEL SELECCIONADO
             mostrar_imagen_coctel(receta, key_suffix="calc")
 
             medidas_nuevas = calcular_porciones(receta, num_personas)
 
+            # Construir filas de medidas
+            filas_medidas = "".join([
+                f'<div style="display:flex;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid rgba(255,255,255,0.1);">'
+                f'<span style="color:#e0e0e0;">{ing}</span>'
+                f'<span style="color:#D4A017;font-weight:bold;">{medida}</span></div>'
+                for ing, medida in medidas_nuevas.items()
+            ])
+
+            # Construir pasos de preparación
+            pasos_html = "".join([
+                f'<div style="display:flex;align-items:flex-start;margin:0.5rem 0;">'
+                f'<span class="step-number">{i}</span>'
+                f'<span style="color:#e0e0e0;">{paso}</span></div>'
+                for i, paso in enumerate(receta['preparacion'], 1)
+            ])
+
             st.markdown(f"""
             <div class="recipe-card">
-                <h3 style="color: #D4A017 !important;">{receta['nombre']} — {num_personas} personas</h3>
-                <p style="color: #888 !important;">⏱️ {receta['tiempo']} min por preparación | {"⭐" * receta['dificultad']}</p>
+                <h3 style="color:#D4A017;">{receta['nombre']} — {num_personas} personas</h3>
+                <p style="color:#888;">⏱️ {receta['tiempo']} min por preparación | {"⭐" * receta['dificultad']}</p>
 
-                <h4 style="color: #F4D03F !important; margin-top: 1rem;">🧪 Medidas ajustadas:</h4>
-            """, unsafe_allow_html=True)
+                <h4 style="color:#F4D03F;margin-top:1rem;">🧪 Medidas ajustadas:</h4>
+                {filas_medidas}
 
-            for ing, medida in medidas_nuevas.items():
-                st.markdown(f'<div style="display: flex; justify-content: space-between; padding: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.1);"><span style="color: #e0e0e0 !important;">{ing}</span><span style="color: #D4A017 !important; font-weight: bold;">{medida}</span></div>', unsafe_allow_html=True)
+                <h4 style="color:#F4D03F;margin-top:1.5rem;">👨‍🍳 Preparación:</h4>
+                {pasos_html}
 
-            st.markdown(f"""
-                <h4 style="color: #F4D03F !important; margin-top: 1.5rem;">👨‍🍳 Preparación:</h4>
-            """, unsafe_allow_html=True)
-
-            for i, paso in enumerate(receta['preparacion'], 1):
-                st.markdown(f'<div style="display: flex; align-items: start; margin: 0.5rem 0;"><span class="step-number">{i}</span><span style="color: #e0e0e0 !important;">{paso}</span></div>', unsafe_allow_html=True)
-
-            st.markdown(f"""
-                <div class="result-box" style="margin-top: 1rem;">
-                    <b style="color: #D4A017 !important;">💡 Tip:</b> <span style="color: #e0e0e0 !important;">{receta['tips']}</span><br><br>
-                    <b style="color: #D4A017 !important;">📊 Total estimado:</b> <span style="color: #e0e0e0 !important;">{num_personas * receta['tiempo']} minutos en total</span>
+                <div class="result-box" style="margin-top:1rem;">
+                    <b style="color:#D4A017;">💡 Tip:</b>
+                    <span style="color:#e0e0e0;">{receta['tips']}</span><br><br>
+                    <b style="color:#D4A017;">📊 Total estimado:</b>
+                    <span style="color:#e0e0e0;">{num_personas * receta['tiempo']} minutos en total</span>
                 </div>
             </div>
             """, unsafe_allow_html=True)
