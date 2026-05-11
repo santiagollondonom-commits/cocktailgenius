@@ -961,7 +961,7 @@ with tabs[4]:
         if enviado_ws:
             if ws_nombre and ws_email:
                 import datetime
-                N8N_WEBHOOK_CATEDRAL = "https://santiagolondono.app.n8n.cloud/webhook-test/contacto-cocktailgenius"
+                N8N_WEBHOOK_CATEDRAL = "https://santiagolondono.app.n8n.cloud/webhook/contacto-nosotros"
                 payload = {
                     "nombre": ws_nombre,
                     "email":  ws_email,
