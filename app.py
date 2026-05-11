@@ -1073,7 +1073,7 @@ with tabs[6]:
         if enviado_contacto:
             if nombre and email and mensaje:
                 import datetime
-                N8N_WEBHOOK_CONTACTO = "TU_WEBHOOK_URL_CONTACTO"
+                N8N_WEBHOOK_CONTACTO = "https://santiagolondono.app.n8n.cloud/webhook/contacto-nosotros"
                 payload = {
                     "nombre":  nombre,
                     "email":   email,
