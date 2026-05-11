@@ -1,5 +1,4 @@
-
-code = '''import streamlit as st
+import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
@@ -26,12 +25,12 @@ st.markdown("""
     .stApp {
         background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
     }
-    
+
     /* Texto general en blanco */
     .stApp, p, h1, h2, h3, h4, h5, h6, div, span, label, li {
         color: #ffffff !important;
     }
-    
+
     /* ============================================
        CORRECCIÓN 1: SELECTBOX, NUMBER_INPUT, TEXT_INPUT
        Texto NEGRO para que se vea en fondo claro
@@ -49,13 +48,13 @@ st.markdown("""
         background: #ffffff !important;
         font-weight: 500 !important;
     }
-    
+
     /* Placeholder en gris oscuro */
     ::placeholder {
         color: #666666 !important;
         opacity: 1 !important;
     }
-    
+
     /* ============================================
        CORRECCIÓN 2: OPCIONES DEL DROPDOWN (selectbox)
        ============================================ */
@@ -66,13 +65,13 @@ st.markdown("""
         color: #1a1a2e !important;
         background: #ffffff !important;
     }
-    
+
     div[data-baseweb="menu"] li:hover,
     [role="option"]:hover {
         background: #f0f0f0 !important;
         color: #1a1a2e !important;
     }
-    
+
     /* ============================================
        CORRECCIÓN 3: LABELS DE FORMULARIO
        Mantener blanco para que se vean en fondo oscuro
@@ -85,7 +84,7 @@ st.markdown("""
         color: #ffffff !important;
         font-weight: 600 !important;
     }
-    
+
     /* ============================================
        CORRECCIÓN 4: BOTONES DE +/- EN NUMBER_INPUT
        ============================================ */
@@ -94,7 +93,7 @@ st.markdown("""
         background: #e0e0e0 !important;
         border: 1px solid #cccccc !important;
     }
-    
+
     /* ============================================
        TÍTULOS Y ESTILOS EXISTENTES (sin cambios)
        ============================================ */
@@ -106,7 +105,7 @@ st.markdown("""
         margin-bottom: 0.5rem;
         text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
     }
-    
+
     .section-title {
         font-size: 2.5rem;
         font-weight: bold;
@@ -114,7 +113,7 @@ st.markdown("""
         text-align: center;
         margin: 2rem 0 1rem 0;
     }
-    
+
     .hero-subtitle {
         font-size: 1.2rem;
         color: #b8b8b8 !important;
@@ -123,7 +122,7 @@ st.markdown("""
         letter-spacing: 2px;
         margin-bottom: 2rem;
     }
-    
+
     .card-elegant {
         background: rgba(255,255,255,0.08);
         backdrop-filter: blur(10px);
@@ -132,20 +131,20 @@ st.markdown("""
         padding: 2rem;
         margin: 1rem 0;
     }
-    
+
     .card-title {
         font-size: 1.4rem;
         font-weight: bold;
         color: #D4A017 !important;
         margin-bottom: 0.5rem;
     }
-    
+
     .card-text {
         color: #e0e0e0 !important;
         font-size: 1rem;
         line-height: 1.6;
     }
-    
+
     .price-tag {
         display: inline-block;
         background: linear-gradient(135deg, #D4A017 0%, #F4D03F 100%);
@@ -156,7 +155,7 @@ st.markdown("""
         font-size: 0.9rem;
         margin-top: 1rem;
     }
-    
+
     .recipe-card {
         background: rgba(255,255,255,0.1);
         border-radius: 15px;
@@ -164,7 +163,7 @@ st.markdown("""
         margin: 1rem 0;
         border: 1px solid rgba(212,160,23,0.2);
     }
-    
+
     .ingredient-tag {
         display: inline-block;
         background: rgba(212,160,23,0.2);
@@ -175,7 +174,7 @@ st.markdown("""
         font-size: 0.9rem;
         font-weight: 500;
     }
-    
+
     .step-number {
         display: inline-flex;
         align-items: center;
@@ -189,7 +188,7 @@ st.markdown("""
         margin-right: 1rem;
         flex-shrink: 0;
     }
-    
+
     .result-box {
         background: rgba(212,160,23,0.15);
         border-left: 4px solid #D4A017;
@@ -197,13 +196,13 @@ st.markdown("""
         border-radius: 10px;
         margin: 1rem 0;
     }
-    
+
     .cocktail-image {
         border-radius: 15px;
         border: 2px solid rgba(212,160,23,0.5);
         box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }
-    
+
     /* Input de búsqueda de ingredientes - mantener estilo dorado */
     .stTextInput > div > div > input,
     div[data-baseweb="input"] input {
@@ -214,16 +213,16 @@ st.markdown("""
         padding: 0.8rem !important;
         font-size: 1rem !important;
     }
-    
+
     /* Placeholder del input de búsqueda */
     .stTextInput ::placeholder {
         color: #888888 !important;
     }
-    
+
     .stSlider > div > div > div > div {
         background: #D4A017 !important;
     }
-    
+
     .stButton > button {
         background: linear-gradient(135deg, #D4A017 0%, #F4D03F 100%) !important;
         color: #0f0f0f !important;
@@ -234,19 +233,19 @@ st.markdown("""
         font-size: 1rem !important;
         box-shadow: 0 4px 15px rgba(212,160,23,0.3) !important;
     }
-    
+
     .stButton > button:hover {
         transform: translateY(-2px) !important;
         box-shadow: 0 6px 20px rgba(212,160,23,0.5) !important;
     }
-    
+
     .stTabs [data-baseweb="tab-list"] {
         gap: 0.5rem;
         background: rgba(255,255,255,0.05);
         padding: 0.5rem;
         border-radius: 50px;
     }
-    
+
     .stTabs [data-baseweb="tab"] {
         color: #b8b8b8 !important;
         font-size: 0.85rem;
@@ -254,13 +253,13 @@ st.markdown("""
         border-radius: 25px;
         padding: 0.5rem 1rem;
     }
-    
+
     .stTabs [aria-selected="true"] {
         background: linear-gradient(135deg, #D4A017 0%, #F4D03F 100%) !important;
         color: #0f0f0f !important;
         font-weight: bold !important;
     }
-    
+
     .footer {
         text-align: center;
         padding: 3rem 0;
@@ -268,32 +267,32 @@ st.markdown("""
         border-top: 1px solid rgba(255,255,255,0.1);
         margin-top: 3rem;
     }
-    
+
     .stMetric > div { color: white !important; }
     .stMetric > label { color: #b8b8b8 !important; }
-    
+
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
-    
+
     .stInfo {
         background: rgba(212,160,23,0.1) !important;
         border: 1px solid rgba(212,160,23,0.3) !important;
         color: white !important;
     }
-    
+
     .stSuccess {
         background: rgba(46,204,113,0.2) !important;
         border: 1px solid #2ecc71 !important;
         color: white !important;
     }
-    
+
     .stError {
         background: rgba(231,76,60,0.2) !important;
         border: 1px solid #e74c3c !important;
         color: white !important;
     }
-    
+
     /* Estilos para placeholder de imagen */
     .image-placeholder {
         background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
@@ -303,7 +302,7 @@ st.markdown("""
         text-align: center;
         color: #D4A017 !important;
     }
-    
+
     .image-loading {
         display: flex;
         flex-direction: column;
@@ -458,13 +457,13 @@ def generar_imagen_url(prompt, nombre_coctel, seed=None):
         # Usar seed única por cóctel para consistencia, o aleatoria para variedad
         if seed is None:
             seed = hash(nombre_coctel) % 10000
-        
+
         # Codificar el prompt para URL
         prompt_encoded = urllib.parse.quote(prompt)
-        
+
         # Construir URL de Pollinations con parámetros optimizados
         url = f"https://image.pollinations.ai/prompt/{prompt_encoded}?width=512&height=512&nologo=true&seed={seed}&enhance=true&negative_prompt=text,watermark,blurry,low quality"
-        
+
         return url
     except Exception as e:
         st.error(f"Error generando imagen: {str(e)}")
@@ -482,19 +481,19 @@ def mostrar_imagen_coctel(receta, key_suffix=""):
     """
     nombre = receta['nombre']
     prompt = receta['imagen_prompt']
-    
+
     # Crear contenedor para la imagen
     image_container = st.container()
-    
+
     with image_container:
         # Spinner mientras "carga" (la imagen se genera en tiempo real)
         with st.spinner(f"🎨 Generando imagen de {nombre} con IA..."):
             # Pequeña pausa para efecto visual (la imagen ya se genera en tiempo real)
             time.sleep(0.5)
-            
+
             # Generar URL de la imagen
             imagen_url = generar_imagen_url(prompt, nombre)
-            
+
             if imagen_url:
                 # Mostrar imagen desde URL con manejo de errores
                 try:
@@ -535,12 +534,12 @@ def mostrar_placeholder_imagen(nombre_coctel):
 def buscar_receta(ingredientes_usuario):
     ingredientes_lower = [i.lower().strip() for i in ingredientes_usuario.split(",")]
     resultados = []
-    
+
     for key, receta in RECETAS_DB.items():
         coincidencias = sum(1 for ing in ingredientes_lower if any(ing in r.lower() for r in receta["ingredientes"]))
         if coincidencias > 0:
             resultados.append((coincidencias, receta))
-    
+
     resultados.sort(reverse=True, key=lambda x: x[0])
     return [r[1] for r in resultados[:3]] if resultados else None
 
@@ -568,14 +567,14 @@ col1, col2, col3 = st.columns([1, 3, 1])
 
 with col2:
     header_col1, header_col2 = st.columns([1, 3])
-    
+
     with header_col1:
         # Logo emoji como fallback - NO requiere archivo local
         st.markdown("<div style='font-size: 4rem; text-align: right;'>🍹</div>", unsafe_allow_html=True)
-    
+
     with header_col2:
         st.markdown('<div class="main-title" style="text-align: left; margin-top: 0.5rem;">CocktailGenius</div>', unsafe_allow_html=True)
-    
+
     st.markdown('<div class="hero-subtitle">TU BAR PERSONAL, IMPULSADO POR INTELIGENCIA ARTIFICIAL</div>', unsafe_allow_html=True)
 
 st.markdown("---")
@@ -590,7 +589,7 @@ tabs = st.tabs(["🏠 INICIO", "🧠 GENRECETA", "📊 TRENDPREDICTOR", "🧮 CA
 # ============================================
 with tabs[0]:
     col1, col2 = st.columns([2, 1])
-    
+
     with col1:
         st.markdown("""
         <div class="card-elegant">
@@ -611,13 +610,13 @@ with tabs[0]:
             </p>
         </div>
         """, unsafe_allow_html=True)
-        
+
         c1, c2, c3, c4 = st.columns(4)
         c1.metric("Recetas", "500+", "+50/mes")
         c2.metric("Usuarios", "2,400+", "+12%")
         c3.metric("Precisión ML", "66.9%", "R²")
         c4.metric("Satisfacción", "4.8/5", "⭐")
-    
+
     with col2:
         st.markdown("""
         <div class="card-elegant" style="text-align: center;">
@@ -625,7 +624,7 @@ with tabs[0]:
             <p class="card-text">Video comercial generado con IA<br>27 segundos</p>
         </div>
         """, unsafe_allow_html=True)
-        
+
         # Placeholder para video - NO requiere archivo local
         st.info("📹 Aquí irá tu video MP4 de 27 segundos (puedes subirlo a YouTube y embeberlo)")
 
@@ -634,9 +633,9 @@ with tabs[0]:
 # ============================================
 with tabs[1]:
     st.markdown('<div class="section-title">🧠 GenReceta IA</div>', unsafe_allow_html=True)
-    
+
     col1, col2 = st.columns([1, 2])
-    
+
     with col1:
         st.markdown("""
         <div class="card-elegant">
@@ -648,16 +647,16 @@ with tabs[1]:
             </p>
         </div>
         """, unsafe_allow_html=True)
-        
+
         ingredientes_input = st.text_input(
             "Tus ingredientes:",
             placeholder="Ej: ron, lima, menta, azúcar...",
             key="ingredientes",
             help="Escribe ingredientes separados por comas"
         )
-        
+
         buscar = st.button("🔍 Buscar Receta", use_container_width=True)
-        
+
         # Info sobre imágenes
         st.markdown("""
         <div style="background: rgba(212,160,23,0.1); border-radius: 10px; padding: 1rem; margin-top: 1rem;">
@@ -667,33 +666,33 @@ with tabs[1]:
             </p>
         </div>
         """, unsafe_allow_html=True)
-    
+
     with col2:
         if buscar and ingredientes_input:
             resultados = buscar_receta(ingredientes_input)
-            
+
             if resultados:
                 for idx, receta in enumerate(resultados):
                     # MOSTRAR IMAGEN GENERADA CON IA - ÚNICA POR RECETA
                     mostrar_imagen_coctel(receta, key_suffix=f"gen_{idx}")
-                    
+
                     st.markdown(f"""
                     <div class="recipe-card">
                         <h3 style="color: #D4A017 !important; margin-bottom: 0.5rem;">{receta['nombre']}</h3>
                         <p style="color: #888 !important; font-size: 0.9rem;">
                         ⏱️ {receta['tiempo']} min | {"⭐" * receta['dificultad']}{"☆" * (5-receta['dificultad'])} | Dificultad: {receta['dificultad']}/5
                         </p>
-                        
+
                         <h4 style="color: #F4D03F !important; margin-top: 1rem;">🧪 Ingredientes y medidas:</h4>
                     """, unsafe_allow_html=True)
-                    
+
                     for ing, medida in receta['medidas'].items():
                         st.markdown(f'<span class="ingredient-tag">{ing}: {medida}</span>', unsafe_allow_html=True)
-                    
+
                     st.markdown("<h4 style='color: #F4D03F !important; margin-top: 1rem;'>👨‍🍳 Preparación paso a paso:</h4>", unsafe_allow_html=True)
                     for i, paso in enumerate(receta['preparacion'], 1):
                         st.markdown(f'<div style="display: flex; align-items: start; margin: 0.5rem 0;"><span class="step-number">{i}</span><span style="color: #e0e0e0 !important;">{paso}</span></div>', unsafe_allow_html=True)
-                    
+
                     st.markdown(f"""
                         <div class="result-box" style="margin-top: 1rem;">
                             <b style="color: #D4A017 !important;">💡 Tip profesional:</b> <span style="color: #e0e0e0 !important;">{receta['tips']}</span>
@@ -710,9 +709,9 @@ with tabs[1]:
 # ============================================
 with tabs[2]:
     st.markdown('<div class="section-title">📊 TrendPredictor ML</div>', unsafe_allow_html=True)
-    
+
     col1, col2 = st.columns([1, 2])
-    
+
     with col1:
         st.markdown("""
         <div class="card-elegant">
@@ -732,18 +731,18 @@ with tabs[2]:
             </p>
         </div>
         """, unsafe_allow_html=True)
-        
+
         st.subheader("🔮 Predice tu cóctel")
-        
+
         ing = st.slider("Ingredientes", 2, 10, 4, key="ml_ing")
         tiempo = st.slider("Tiempo (min)", 2, 15, 5, key="ml_time")
         tec = st.slider("Técnicas requeridas", 1, 4, 2, key="ml_tec")
-        
+
         dif = predecir_dificultad(ing, tiempo, tec)
         niveles = {1:"🟢 Muy Fácil", 2:"🟡 Fácil", 3:"🟠 Medio", 4:"🔴 Difícil", 5:"⚫ Experto"}
-        
+
         st.success(f"**Dificultad predicha: {dif}/5** — {niveles[dif]}")
-    
+
     with col2:
         st.subheader("📋 Dataset de entrenamiento")
         df = pd.DataFrame({
@@ -754,7 +753,7 @@ with tabs[2]:
             'Dificultad': [2, 1, 3, 2, 1, 2, 2, 2, 2, 3]
         })
         st.dataframe(df, use_container_width=True)
-        
+
         fig, ax = plt.subplots(figsize=(10, 6))
         counts = df['Dificultad'].value_counts().sort_index()
         colors = ['#2ecc71', '#f39c12', '#e67e22', '#e74c3c']
@@ -778,9 +777,9 @@ with tabs[2]:
 # ============================================
 with tabs[3]:
     st.markdown('<div class="section-title">🧮 Calculadora de Dosis</div>', unsafe_allow_html=True)
-    
+
     col1, col2 = st.columns([1, 2])
-    
+
     with col1:
         st.markdown("""
         <div class="card-elegant">
@@ -793,46 +792,46 @@ with tabs[3]:
             <p class="price-tag">GRATIS</p>
         </div>
         """, unsafe_allow_html=True)
-        
+
         st.subheader("⚙️ Configuración")
-        
+
         receta_seleccionada = st.selectbox(
             "Selecciona un cóctel:",
             options=list(RECETAS_DB.keys()),
             format_func=lambda x: RECETAS_DB[x]['nombre']
         )
-        
+
         num_personas = st.number_input("Número de personas:", min_value=1, max_value=50, value=4)
-        
+
         calcular = st.button("🧮 Calcular Medidas", use_container_width=True)
-    
+
     with col2:
         if calcular:
             receta = RECETAS_DB[receta_seleccionada]
-            
+
             # MOSTRAR IMAGEN DEL CÓCTEL SELECCIONADO - GENERADA EN TIEMPO REAL
             mostrar_imagen_coctel(receta, key_suffix="calc")
-            
+
             medidas_nuevas = calcular_porciones(receta, num_personas)
-            
+
             st.markdown(f"""
             <div class="recipe-card">
                 <h3 style="color: #D4A017 !important;">{receta['nombre']} — {num_personas} personas</h3>
                 <p style="color: #888 !important;">⏱️ {receta['tiempo']} min por preparación | {"⭐" * receta['dificultad']}</p>
-                
+
                 <h4 style="color: #F4D03F !important; margin-top: 1rem;">🧪 Medidas ajustadas:</h4>
             """, unsafe_allow_html=True)
-            
+
             for ing, medida in medidas_nuevas.items():
                 st.markdown(f'<div style="display: flex; justify-content: space-between; padding: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.1);"><span style="color: #e0e0e0 !important;">{ing}</span><span style="color: #D4A017 !important; font-weight: bold;">{medida}</span></div>', unsafe_allow_html=True)
-            
+
             st.markdown(f"""
                 <h4 style="color: #F4D03F !important; margin-top: 1.5rem;">👨‍🍳 Preparación:</h4>
             """, unsafe_allow_html=True)
-            
+
             for i, paso in enumerate(receta['preparacion'], 1):
                 st.markdown(f'<div style="display: flex; align-items: start; margin: 0.5rem 0;"><span class="step-number">{i}</span><span style="color: #e0e0e0 !important;">{paso}</span></div>', unsafe_allow_html=True)
-            
+
             st.markdown(f"""
                 <div class="result-box" style="margin-top: 1rem;">
                     <b style="color: #D4A017 !important;">💡 Tip:</b> <span style="color: #e0e0e0 !important;">{receta['tips']}</span><br><br>
@@ -846,7 +845,7 @@ with tabs[3]:
 # ============================================
 with tabs[4]:
     st.markdown('<div class="section-title">🎓 Cátedra de Cata</div>', unsafe_allow_html=True)
-    
+
     st.markdown("""
     <div class="card-elegant" style="text-align: center;">
         <h3 style="color: #D4A017 !important;">Desarrolla tu paladar de experto</h3>
@@ -857,9 +856,9 @@ with tabs[4]:
         <p class="price-tag">PRÓXIMAMENTE — $4.99/mes</p>
     </div>
     """, unsafe_allow_html=True)
-    
+
     col1, col2, col3 = st.columns(3)
-    
+
     with col1:
         st.markdown("""
         <div class="card-elegant">
@@ -872,7 +871,7 @@ with tabs[4]:
             </p>
         </div>
         """, unsafe_allow_html=True)
-    
+
     with col2:
         st.markdown("""
         <div class="card-elegant">
@@ -885,7 +884,7 @@ with tabs[4]:
             </p>
         </div>
         """, unsafe_allow_html=True)
-    
+
     with col3:
         st.markdown("""
         <div class="card-elegant">
@@ -898,7 +897,7 @@ with tabs[4]:
             </p>
         </div>
         """, unsafe_allow_html=True)
-    
+
     st.info("🔒 Acceso exclusivo para miembros premium. Únete a la lista de espera.")
 
 # ============================================
@@ -906,7 +905,7 @@ with tabs[4]:
 # ============================================
 with tabs[5]:
     st.markdown('<div class="section-title">🤖 BartenderBot</div>', unsafe_allow_html=True)
-    
+
     st.markdown("""
     <div class="card-elegant" style="text-align: center;">
         <h3 style="color: #D4A017 !important;">Tu bartender personal, disponible 24/7</h3>
@@ -916,14 +915,14 @@ with tabs[5]:
         </p>
     </div>
     """, unsafe_allow_html=True)
-    
+
     st.components.v1.html("""
     <div style="height: 500px; width: 100%;">
         <script src="https://cdn.botpress.cloud/webchat/v3.6/inject.js"></script>
         <script src="https://files.bpcontent.cloud/2026/05/07/21/20260507211006-AAWTTVTT.js" defer></script>
     </div>
     """, height=500)
-    
+
     st.info("💡 El chatbot se carga en la esquina inferior derecha. Haz clic en el icono para conversar.")
 
 # ============================================
@@ -931,9 +930,9 @@ with tabs[5]:
 # ============================================
 with tabs[6]:
     st.markdown('<div class="section-title">📞 Nosotros</div>', unsafe_allow_html=True)
-    
+
     col1, col2 = st.columns(2)
-    
+
     with col1:
         st.markdown("""
         <div class="card-elegant">
@@ -945,7 +944,7 @@ with tabs[6]:
             </p>
         </div>
         """, unsafe_allow_html=True)
-        
+
         st.markdown("""
         <div class="card-elegant">
             <h3 style="color: #D4A017 !important;">👁️ Visión</h3>
@@ -955,7 +954,7 @@ with tabs[6]:
             </p>
         </div>
         """, unsafe_allow_html=True)
-        
+
         st.markdown("""
         <div class="card-elegant">
             <h3 style="color: #D4A017 !important;">💎 Valores</h3>
@@ -967,7 +966,7 @@ with tabs[6]:
             </p>
         </div>
         """, unsafe_allow_html=True)
-    
+
     with col2:
         st.markdown("""
         <div class="card-elegant">
@@ -980,14 +979,14 @@ with tabs[6]:
             </p>
         </div>
         """, unsafe_allow_html=True)
-        
+
         st.subheader("✉️ Envíanos un mensaje")
         with st.form("contacto"):
             nombre = st.text_input("Nombre completo")
             email = st.text_input("Correo electrónico")
             asunto = st.selectbox("Asunto", ["Consulta general", "Soporte técnico", "Partnerships", "Feedback"])
             mensaje = st.text_area("Mensaje", height=100)
-            
+
             if st.form_submit_button("📨 Enviar mensaje", use_container_width=True):
                 st.success("✅ ¡Mensaje enviado! Te responderemos en menos de 24 horas.")
                 st.info("💡 En producción: este mensaje se guarda automáticamente en Google Sheets vía n8n")
@@ -1004,11 +1003,3 @@ st.markdown("""
     </p>
 </div>
 """, unsafe_allow_html=True)
-'''
-
-# Save to file
-with open('/mnt/agents/output/app.py', 'w', encoding='utf-8') as f:
-    f.write(code)
-
-print("✅ Archivo guardado correctamente")
-print(f"📄 Tamaño: {len(code)} caracteres")
