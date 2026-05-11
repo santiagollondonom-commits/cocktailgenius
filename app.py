@@ -3,8 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 import requests
-import base64
-from io import BytesIO
+import urllib.parse
 
 # ============================================
 # CONFIGURACIÓN DE PÁGINA
@@ -17,21 +16,18 @@ st.set_page_config(
 )
 
 # ============================================
-# CSS PERSONALIZADO - FONDO OSCURO + TEXTO BLANCO + INPUTS VISIBLES
+# CSS PERSONALIZADO - FONDO OSCURO + TEXTO BLANCO
 # ============================================
 st.markdown("""
 <style>
-    /* FONDO OSCURO GLOBAL */
     .stApp {
         background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
     }
     
-    /* TEXTO BLANCO BASE */
     .stApp, p, h1, h2, h3, h4, h5, h6, div, span, label, li {
         color: #ffffff !important;
     }
     
-    /* TÍTULOS DORADOS */
     .main-title {
         font-size: 3.5rem;
         font-weight: bold;
@@ -58,22 +54,6 @@ st.markdown("""
         margin-bottom: 2rem;
     }
     
-    /* HEADER CON LOGO CENTRADO */
-    .header-container {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 1.5rem;
-        margin-bottom: 1rem;
-    }
-    
-    .logo-img {
-        width: 80px;
-        height: 80px;
-        object-fit: contain;
-    }
-    
-    /* CARDS ELEGANTES */
     .card-elegant {
         background: rgba(255,255,255,0.08);
         backdrop-filter: blur(10px);
@@ -107,7 +87,6 @@ st.markdown("""
         margin-top: 1rem;
     }
     
-    /* RECIPE CARDS */
     .recipe-card {
         background: rgba(255,255,255,0.1);
         border-radius: 15px;
@@ -149,7 +128,12 @@ st.markdown("""
         margin: 1rem 0;
     }
     
-    /* INPUTS - CORREGIDOS PARA SER VISIBLES */
+    .cocktail-image {
+        border-radius: 15px;
+        border: 2px solid rgba(212,160,23,0.5);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    
     .stTextInput > div > div > input,
     .stNumberInput > div > div > input,
     .stSelectbox > div > div > div,
@@ -164,18 +148,15 @@ st.markdown("""
         font-size: 1rem !important;
     }
     
-    /* PLACEHOLDER COLOR */
     ::placeholder {
         color: #888888 !important;
         opacity: 1 !important;
     }
     
-    /* SLIDERS */
     .stSlider > div > div > div > div {
         background: #D4A017 !important;
     }
     
-    /* BOTONES ESTILO WEB PROFESIONAL */
     .stButton > button {
         background: linear-gradient(135deg, #D4A017 0%, #F4D03F 100%) !important;
         color: #0f0f0f !important;
@@ -184,7 +165,6 @@ st.markdown("""
         border: none !important;
         padding: 0.8rem 2rem !important;
         font-size: 1rem !important;
-        transition: all 0.3s ease !important;
         box-shadow: 0 4px 15px rgba(212,160,23,0.3) !important;
     }
     
@@ -193,7 +173,6 @@ st.markdown("""
         box-shadow: 0 6px 20px rgba(212,160,23,0.5) !important;
     }
     
-    /* TABS ESTILO BOTONES */
     .stTabs [data-baseweb="tab-list"] {
         gap: 0.5rem;
         background: rgba(255,255,255,0.05);
@@ -215,7 +194,6 @@ st.markdown("""
         font-weight: bold !important;
     }
     
-    /* FOOTER */
     .footer {
         text-align: center;
         padding: 3rem 0;
@@ -224,25 +202,13 @@ st.markdown("""
         margin-top: 3rem;
     }
     
-    /* METRICAS */
-    .stMetric > div {
-        color: white !important;
-    }
-    .stMetric > label {
-        color: #b8b8b8 !important;
-    }
+    .stMetric > div { color: white !important; }
+    .stMetric > label { color: #b8b8b8 !important; }
     
-    /* DATAFRAME */
-    .stDataFrame {
-        background: rgba(255,255,255,0.05) !important;
-    }
-    
-    /* OCULTAR MENÚ STREAMLIT */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
     
-    /* INFO BOXES */
     .stInfo {
         background: rgba(212,160,23,0.1) !important;
         border: 1px solid rgba(212,160,23,0.3) !important;
@@ -260,23 +226,11 @@ st.markdown("""
         border: 1px solid #e74c3c !important;
         color: white !important;
     }
-    
-    /* SELECTBOX OPTIONS */
-    div[role="listbox"] div {
-        color: #ffffff !important;
-        background: #1a1a2e !important;
-    }
-    
-    /* NUMBER INPUT ARROWS */
-    button[data-testid="stNumberInputStepUp"],
-    button[data-testid="stNumberInputStepDown"] {
-        color: #D4A017 !important;
-    }
 </style>
 """, unsafe_allow_html=True)
 
 # ============================================
-# BASE DE DATOS DE RECETAS CON IMÁGENES
+# BASE DE DATOS DE RECETAS CON PROMPTS PARA IMÁGENES
 # ============================================
 RECETAS_DB = {
     "mojito": {
@@ -293,7 +247,7 @@ RECETAS_DB = {
             "Decora con ramita de menta"
         ],
         "tips": "No machaques la menta con fuerza, solo presiona para liberar aceites esenciales",
-        "imagen_prompt": "Mojito cocktail in tall glass with fresh mint leaves, lime slices, ice cubes, golden rum, soda bubbles, dark bar background, professional food photography, elegant lighting"
+        "imagen_prompt": "professional cocktail photography, mojito in tall crystal glass, fresh mint leaves, lime wedges, crushed ice, golden rum, soda bubbles, dark elegant bar background, warm lighting, high quality, 4k"
     },
     "margarita": {
         "nombre": "Margarita",
@@ -308,7 +262,7 @@ RECETAS_DB = {
             "Cuela en vaso escarchado con sal"
         ],
         "tips": "Usa tequila 100% agave para mejor sabor",
-        "imagen_prompt": "Margarita cocktail in salt-rimmed glass, golden tequila, lime wedge, professional bar photography, dark elegant background, crystal clear ice"
+        "imagen_prompt": "professional cocktail photography, margarita in elegant margarita glass with salt rim, golden tequila, lime wedge, crystal clear ice, dark sophisticated bar background, warm ambient lighting, high quality, 4k"
     },
     "old fashioned": {
         "nombre": "Old Fashioned",
@@ -325,7 +279,7 @@ RECETAS_DB = {
             "Exprime cáscara de naranja sobre el trago"
         ],
         "tips": "El hielo debe ser grande para dilución lenta",
-        "imagen_prompt": "Old Fashioned cocktail in crystal glass, large ice cube, amber bourbon, orange peel twist, dark wood bar, professional photography, warm lighting"
+        "imagen_prompt": "professional cocktail photography, old fashioned in crystal rocks glass, large clear ice cube, amber bourbon whiskey, orange peel twist, dark wood bar counter, warm golden lighting, sophisticated atmosphere, high quality, 4k"
     },
     "negroni": {
         "nombre": "Negroni",
@@ -340,7 +294,7 @@ RECETAS_DB = {
             "Decora con twist de naranja"
         ],
         "tips": "Clásico italiano, perfecto para aperitivo",
-        "imagen_prompt": "Negroni cocktail in lowball glass, red Campari, gin, sweet vermouth, large ice cube, orange twist, dark sophisticated bar background, professional photography"
+        "imagen_prompt": "professional cocktail photography, negroni in lowball glass, vibrant red campari, gin, sweet vermouth, large ice sphere, orange twist garnish, dark elegant bar background, sophisticated lighting, high quality, 4k"
     },
     "piña colada": {
         "nombre": "Piña Colada",
@@ -355,7 +309,7 @@ RECETAS_DB = {
             "Decora con piña y cereza"
         ],
         "tips": "Usa piña fresca para mejor sabor",
-        "imagen_prompt": "Piña Colada cocktail in tall hurricane glass, creamy white coconut, pineapple slice, cherry, tropical bar, professional photography, dark background contrast"
+        "imagen_prompt": "professional cocktail photography, piña colada in tall hurricane glass, creamy white coconut, fresh pineapple slice, maraschino cherry, tropical umbrella, dark bar background with warm lighting, high quality, 4k"
     },
     "espresso martini": {
         "nombre": "Espresso Martini",
@@ -371,39 +325,79 @@ RECETAS_DB = {
             "Decora con 3 granos de café"
         ],
         "tips": "La clave está en agitar muy fuerte para crear espuma",
-        "imagen_prompt": "Espresso Martini in coupe glass, dark coffee cocktail, three coffee beans on foam, vodka, professional bar photography, elegant dark background"
+        "imagen_prompt": "professional cocktail photography, espresso martini in elegant coupe glass, dark coffee cocktail with creamy foam top, three coffee beans on top, vodka, dark sophisticated bar background, dramatic lighting, high quality, 4k"
+    },
+    "daiquiri": {
+        "nombre": "Daiquiri",
+        "dificultad": 1,
+        "tiempo": 3,
+        "ingredientes": ["Ron blanco", "Jugo de lima", "Jarabe de azúcar"],
+        "medidas": {"Ron blanco": "60ml", "Jugo de lima": "25ml", "Jarabe de azúcar": "15ml"},
+        "preparacion": [
+            "En coctelera con hielo, añade ron, jugo de lima y jarabe",
+            "Agita vigorosamente 10 segundos",
+            "Cuela doblemente en copa fría",
+            "Decora con twist de lima"
+        ],
+        "tips": "El equilibrio entre dulce y ácido es la clave",
+        "imagen_prompt": "professional cocktail photography, daiquiri in elegant coupe glass, clear white rum, lime juice, sugar syrup, crystal clear ice cold, dark bar background, sophisticated lighting, high quality, 4k"
+    },
+    "whiskey sour": {
+        "nombre": "Whiskey Sour",
+        "dificultad": 2,
+        "tiempo": 7,
+        "ingredientes": ["Bourbon", "Jugo de limón", "Jarabe de azúcar", "Clara de huevo"],
+        "medidas": {"Bourbon": "60ml", "Jugo de limón": "30ml", "Jarabe de azúcar": "15ml", "Clara de huevo": "1 unidad (opcional)"},
+        "preparacion": [
+            "En coctelera seca (sin hielo), mezcla bourbon, limón, jarabe y clara de huevo",
+            "Agita en seco 15 segundos (dry shake)",
+            "Añade hielo y agita 10 segundos más",
+            "Cuela en vaso bajo con hielo",
+            "Decora con cereza y naranja"
+        ],
+        "tips": "La clara de huevo crea una textura sedosa y espuma",
+        "imagen_prompt": "professional cocktail photography, whiskey sour in rocks glass, golden bourbon, lemon juice, frothy egg white top, cherry and orange garnish, dark elegant bar background, warm lighting, high quality, 4k"
     }
 }
 
 # ============================================
-# FUNCIÓN PARA GENERAR IMÁGENES CON IA (HUGGING FACE)
+# FUNCIÓN PARA GENERAR IMÁGENES CON POLLINATIONS.AI
 # ============================================
-def generar_imagen_coctel(prompt, nombre_coctel):
-    """Genera imagen de cóctel usando Stable Diffusion via Hugging Face"""
+def generar_imagen_url(prompt, nombre_coctel):
+    """
+    Genera URL de imagen usando Pollinations.ai (gratis, sin API key)
+    La imagen se genera en tiempo real cuando se carga la URL
+    """
     try:
-        # Usar una API gratuita de Hugging Face
-        API_URL = "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0"
-        headers = {"Authorization": "Bearer hf_demo"}  # Token demo gratuito
+        # Codificar el prompt para URL
+        prompt_encoded = urllib.parse.quote(prompt)
         
-        payload = {
-            "inputs": prompt,
-            "parameters": {
-                "num_inference_steps": 30,
-                "guidance_scale": 7.5,
-                "negative_prompt": "blurry, low quality, text, watermark, ugly"
-            }
-        }
+        # Construir URL de Pollinations
+        url = f"https://image.pollinations.ai/prompt/{prompt_encoded}?width=512&height=512&nologo=true&seed=42&enhance=true"
         
-        response = requests.post(API_URL, headers=headers, json=payload, timeout=30)
-        
-        if response.status_code == 200:
-            image_bytes = response.content
-            return image_bytes
-        else:
-            return None
+        return url
     except Exception as e:
-        st.warning(f"⚠️ No se pudo generar imagen: {str(e)}")
+        st.error(f"Error generando imagen: {str(e)}")
         return None
+
+# ============================================
+# FUNCIÓN PARA MOSTRAR IMAGEN CON SPINNER
+# ============================================
+def mostrar_imagen_coctel(receta):
+    """Muestra la imagen del cóctel con indicador de carga"""
+    with st.spinner(f"🎨 Generando imagen de {receta['nombre']} con IA..."):
+        # Generar URL de la imagen
+        imagen_url = generar_imagen_url(receta['imagen_prompt'], receta['nombre'])
+        
+        if imagen_url:
+            # Mostrar imagen desde URL
+            st.image(
+                imagen_url, 
+                caption=f"🎨 {receta['nombre']} — Imagen generada con IA en tiempo real",
+                use_column_width=True,
+                output_format="auto"
+            )
+            st.markdown('<p style="color: #888; font-size: 0.8rem; text-align: center;">🤖 Generado por IA • Cada imagen es única</p>', unsafe_allow_html=True)
 
 # ============================================
 # FUNCIONES AUXILIARES
@@ -484,7 +478,8 @@ with tabs[0]:
             🧠 <b style="color: #D4A017 !important;">+500 recetas</b> en nuestra base de datos<br>
             🤖 <b style="color: #D4A017 !important;">Chatbot bartender</b> disponible 24/7<br>
             📊 <b style="color: #D4A017 !important;">Modelo ML</b> con 66.9% de precisión<br>
-            🎬 <b style="color: #D4A017 !important;">Video comercial</b> generado con IA
+            🎬 <b style="color: #D4A017 !important;">Video comercial</b> generado con IA<br>
+            🎨 <b style="color: #D4A017 !important;">Imágenes IA</b> de cada cóctel en tiempo real
             </p>
         </div>
         """, unsafe_allow_html=True)
@@ -509,7 +504,7 @@ with tabs[0]:
             st.info("📹 Aquí irá tu video MP4 de 27 segundos")
 
 # ============================================
-# TAB 2: GENRECETA IA - CON IMÁGENES GENERADAS
+# TAB 2: GENRECETA IA - CON IMÁGENES GENERADAS AUTOMÁTICAMENTE
 # ============================================
 with tabs[1]:
     st.markdown('<div class="section-title">🧠 GenReceta IA</div>', unsafe_allow_html=True)
@@ -523,7 +518,7 @@ with tabs[1]:
             <p class="card-text">
             Ingresa los ingredientes que tienes disponibles 
             (separados por comas) y nuestra IA te sugerirá 
-            la receta perfecta con medidas exactas e imagen generada.
+            la receta perfecta con <b style="color: #D4A017 !important;">imagen generada en tiempo real</b>.
             </p>
         </div>
         """, unsafe_allow_html=True)
@@ -537,8 +532,15 @@ with tabs[1]:
         
         buscar = st.button("🔍 Buscar Receta", use_container_width=True)
         
-        # Opción para generar imagen
-        generar_img = st.checkbox("✨ Generar imagen IA del cóctel", value=True)
+        # Info sobre imágenes
+        st.markdown("""
+        <div style="background: rgba(212,160,23,0.1); border-radius: 10px; padding: 1rem; margin-top: 1rem;">
+            <p style="color: #D4A017 !important; font-size: 0.9rem; margin: 0;">
+            🎨 <b>Imágenes generadas con IA</b><br>
+            Cada receta incluye una imagen única creada por inteligencia artificial en tiempo real.
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
     
     with col2:
         if buscar and ingredientes_input:
@@ -546,12 +548,8 @@ with tabs[1]:
             
             if resultados:
                 for receta in resultados:
-                    # Generar imagen si está activado
-                    if generar_img:
-                        with st.spinner(f"🎨 Generando imagen de {receta['nombre']}..."):
-                            imagen_bytes = generar_imagen_coctel(receta['imagen_prompt'], receta['nombre'])
-                            if imagen_bytes:
-                                st.image(imagen_bytes, caption=f"🎨 {receta['nombre']} - Generado con IA", use_column_width=True)
+                    # MOSTRAR IMAGEN GENERADA CON IA
+                    mostrar_imagen_coctel(receta)
                     
                     st.markdown(f"""
                     <div class="recipe-card">
@@ -650,7 +648,7 @@ with tabs[2]:
         st.pyplot(fig)
 
 # ============================================
-# TAB 4: CALCULADORA DE DOSIS
+# TAB 4: CALCULADORA DE DOSIS - CON IMÁGEN
 # ============================================
 with tabs[3]:
     st.markdown('<div class="section-title">🧮 Calculadora de Dosis</div>', unsafe_allow_html=True)
@@ -685,6 +683,10 @@ with tabs[3]:
     with col2:
         if calcular:
             receta = RECETAS_DB[receta_seleccionada]
+            
+            # MOSTRAR IMAGEN DEL CÓCTEL SELECCIONADO
+            mostrar_imagen_coctel(receta)
+            
             medidas_nuevas = calcular_porciones(receta, num_personas)
             
             st.markdown(f"""
@@ -789,7 +791,6 @@ with tabs[5]:
     </div>
     """, unsafe_allow_html=True)
     
-    # Embed del chatbot de Botpress
     st.components.v1.html("""
     <div style="height: 500px; width: 100%;">
         <script src="https://cdn.botpress.cloud/webchat/v3.6/inject.js"></script>
@@ -873,8 +874,7 @@ st.markdown("""
     <p style="font-size: 1.5rem; margin-bottom: 0.5rem; color: #D4A017 !important;">🍹 CocktailGenius</p>
     <p style="color: #888 !important;">Tu bar personal, impulsado por inteligencia artificial</p>
     <p style="margin-top: 1rem; font-size: 0.8rem; color: #666 !important;">
-    © 2026 CocktailGenius | Proyecto Final - Fundamentos de IA | 
-    Hecho con ❤️, 🧠 IA y 🥃 pasión por la mixología
+    © 2026 CocktailGenius 
     </p>
 </div>
 """, unsafe_allow_html=True)
