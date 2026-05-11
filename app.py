@@ -2,9 +2,7 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
-from PIL import Image
 import base64
-from io import BytesIO
 
 # ============================================
 # CONFIGURACIÓN DE PÁGINA
@@ -17,121 +15,84 @@ st.set_page_config(
 )
 
 # ============================================
-# CSS PERSONALIZADO - ESTILO ELEGANTE
+# CSS PERSONALIZADO - FONDO OSCURO + LETRA BLANCA
 # ============================================
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;600&display=swap');
-    
-    .main {
-        background: linear-gradient(135deg, #0f0f0f 0%, #1a1a2e 50%, #16213e 100%);
+    /* FONDO OSCURO GLOBAL */
+    .stApp {
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
     }
     
-    .hero-title {
-        font-family: 'Playfair Display', serif;
-        font-size: 4rem;
-        font-weight: 700;
-        background: linear-gradient(135deg, #D4A017 0%, #F4D03F 50%, #D4A017 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+    /* TEXTO BLANCO POR DEFECTO */
+    .stApp, p, h1, h2, h3, h4, h5, h6, div, span, label {
+        color: #ffffff !important;
+    }
+    
+    /* TÍTULOS DORADOS */
+    .main-title {
+        font-size: 3.5rem;
+        font-weight: bold;
+        color: #D4A017 !important;
         text-align: center;
         margin-bottom: 0.5rem;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+    
+    .section-title {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #D4A017 !important;
+        text-align: center;
+        margin: 2rem 0 1rem 0;
     }
     
     .hero-subtitle {
-        font-family: 'Inter', sans-serif;
-        font-size: 1.3rem;
-        color: #b8b8b8;
+        font-size: 1.2rem;
+        color: #b8b8b8 !important;
         text-align: center;
-        font-weight: 300;
+        font-style: italic;
         letter-spacing: 2px;
         margin-bottom: 2rem;
     }
     
-    .section-title {
-        font-family: 'Playfair Display', serif;
-        font-size: 2.5rem;
-        color: #D4A017;
-        text-align: center;
-        margin: 3rem 0 1.5rem 0;
-        font-weight: 700;
-    }
-    
+    /* CARDS ELEGANTES */
     .card-elegant {
-        background: rgba(255,255,255,0.05);
+        background: rgba(255,255,255,0.08);
         backdrop-filter: blur(10px);
         border: 1px solid rgba(212,160,23,0.3);
         border-radius: 15px;
         padding: 2rem;
         margin: 1rem 0;
-        transition: all 0.3s ease;
-    }
-    
-    .card-elegant:hover {
-        border-color: #D4A017;
-        transform: translateY(-5px);
-        box-shadow: 0 10px 30px rgba(212,160,23,0.2);
     }
     
     .card-title {
-        font-family: 'Playfair Display', serif;
         font-size: 1.4rem;
-        color: #D4A017;
+        font-weight: bold;
+        color: #D4A017 !important;
         margin-bottom: 0.5rem;
     }
     
     .card-text {
-        font-family: 'Inter', sans-serif;
-        color: #e0e0e0;
-        font-size: 0.95rem;
+        color: #e0e0e0 !important;
+        font-size: 1rem;
         line-height: 1.6;
     }
     
     .price-tag {
         display: inline-block;
         background: linear-gradient(135deg, #D4A017 0%, #F4D03F 100%);
-        color: #0f0f0f;
+        color: #0f0f0f !important;
         padding: 0.3rem 1rem;
         border-radius: 20px;
-        font-weight: 600;
+        font-weight: bold;
         font-size: 0.9rem;
         margin-top: 1rem;
     }
     
-    .btn-primary {
-        background: linear-gradient(135deg, #D4A017 0%, #F4D03F 100%);
-        color: #0f0f0f;
-        padding: 0.8rem 2rem;
-        border-radius: 30px;
-        border: none;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s;
-    }
-    
-    .btn-primary:hover {
-        transform: scale(1.05);
-        box-shadow: 0 5px 20px rgba(212,160,23,0.4);
-    }
-    
-    .input-elegant {
-        background: rgba(255,255,255,0.1);
-        border: 1px solid rgba(212,160,23,0.3);
-        border-radius: 10px;
-        color: white;
-        padding: 0.8rem;
-    }
-    
-    .result-box {
-        background: rgba(212,160,23,0.1);
-        border-left: 4px solid #D4A017;
-        padding: 1.5rem;
-        border-radius: 10px;
-        margin: 1rem 0;
-    }
-    
+    /* RECIPE CARDS */
     .recipe-card {
-        background: rgba(255,255,255,0.08);
+        background: rgba(255,255,255,0.1);
         border-radius: 15px;
         padding: 2rem;
         margin: 1rem 0;
@@ -141,11 +102,12 @@ st.markdown("""
     .ingredient-tag {
         display: inline-block;
         background: rgba(212,160,23,0.2);
-        color: #D4A017;
+        color: #D4A017 !important;
         padding: 0.3rem 0.8rem;
         border-radius: 15px;
         margin: 0.2rem;
-        font-size: 0.85rem;
+        font-size: 0.9rem;
+        font-weight: 500;
     }
     
     .step-number {
@@ -155,44 +117,110 @@ st.markdown("""
         width: 30px;
         height: 30px;
         background: #D4A017;
-        color: #0f0f0f;
+        color: #0f0f0f !important;
         border-radius: 50%;
-        font-weight: 700;
+        font-weight: bold;
         margin-right: 1rem;
     }
     
+    .result-box {
+        background: rgba(212,160,23,0.15);
+        border-left: 4px solid #D4A017;
+        padding: 1.5rem;
+        border-radius: 10px;
+        margin: 1rem 0;
+    }
+    
+    /* INPUTS */
+    .stTextInput > div > div > input,
+    .stNumberInput > div > div > input,
+    .stSelectbox > div > div,
+    .stTextArea > div > div > textarea {
+        background: rgba(255,255,255,0.1) !important;
+        color: white !important;
+        border: 1px solid rgba(212,160,23,0.3) !important;
+        border-radius: 10px !important;
+    }
+    
+    /* SLIDERS */
+    .stSlider > div > div > div > div {
+        background: #D4A017 !important;
+    }
+    
+    /* BOTONES */
+    .stButton > button {
+        background: linear-gradient(135deg, #D4A017 0%, #F4D03F 100%) !important;
+        color: #0f0f0f !important;
+        font-weight: bold !important;
+        border-radius: 30px !important;
+        border: none !important;
+        padding: 0.8rem 2rem !important;
+    }
+    
+    /* TABS */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 1rem;
+        background: rgba(255,255,255,0.05);
+        padding: 1rem;
+        border-radius: 50px;
+    }
+    
+    .stTabs [data-baseweb="tab"] {
+        color: #b8b8b8 !important;
+        font-size: 0.9rem;
+    }
+    
+    .stTabs [aria-selected="true"] {
+        background: linear-gradient(135deg, #D4A017 0%, #F4D03F 100%) !important;
+        color: #0f0f0f !important;
+        border-radius: 25px !important;
+        font-weight: bold !important;
+    }
+    
+    /* FOOTER */
     .footer {
         text-align: center;
         padding: 3rem 0;
-        color: #666;
+        color: #888 !important;
         border-top: 1px solid rgba(255,255,255,0.1);
         margin-top: 3rem;
     }
     
-    /* Ocultar menú por defecto de Streamlit */
+    /* METRICAS */
+    .stMetric > div {
+        color: white !important;
+    }
+    .stMetric > label {
+        color: #b8b8b8 !important;
+    }
+    
+    /* DATAFRAME */
+    .stDataFrame {
+        background: rgba(255,255,255,0.05) !important;
+    }
+    
+    /* OCULTAR MENÚ STREAMLIT */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
     
-    .stTabs [data-baseweb="tab-list"] {
-        gap: 2rem;
-        background: rgba(255,255,255,0.05);
-        padding: 1rem 2rem;
-        border-radius: 50px;
-        margin-bottom: 2rem;
+    /* INFO BOXES */
+    .stInfo {
+        background: rgba(212,160,23,0.1) !important;
+        border: 1px solid rgba(212,160,23,0.3) !important;
+        color: white !important;
     }
     
-    .stTabs [data-baseweb="tab"] {
-        color: #b8b8b8;
-        font-size: 1rem;
-        font-weight: 500;
+    .stSuccess {
+        background: rgba(46,204,113,0.2) !important;
+        border: 1px solid #2ecc71 !important;
+        color: white !important;
     }
     
-    .stTabs [aria-selected="true"] {
-        background: linear-gradient(135deg, #D4A017 0%, #F4D03F 100%);
-        color: #0f0f0f !important;
-        border-radius: 25px;
-        padding: 0.5rem 1.5rem;
+    .stError {
+        background: rgba(231,76,60,0.2) !important;
+        border: 1px solid #e74c3c !important;
+        color: white !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -295,7 +323,6 @@ RECETAS_DB = {
 # FUNCIONES AUXILIARES
 # ============================================
 def buscar_receta(ingredientes_usuario):
-    """Busca receta según ingredientes disponibles"""
     ingredientes_lower = [i.lower().strip() for i in ingredientes_usuario.split(",")]
     resultados = []
     
@@ -308,16 +335,13 @@ def buscar_receta(ingredientes_usuario):
     return [r[1] for r in resultados[:3]] if resultados else None
 
 def predecir_dificultad(ingredientes, tiempo, tecnicas):
-    """Modelo ML simplificado"""
     dificultad = 0.5 + (ingredientes * 0.25) + (tiempo * 0.08) + (tecnicas * 0.35)
     return max(1, min(5, round(dificultad)))
 
 def calcular_porciones(receta_base, num_personas):
-    """Calcula medidas para N personas"""
     factor = num_personas
     medidas_calculadas = {}
     for ing, medida in receta_base["medidas"].items():
-        # Extraer número si existe
         import re
         numero = re.findall(r'(\d+)', medida)
         if numero:
@@ -328,10 +352,21 @@ def calcular_porciones(receta_base, num_personas):
     return medidas_calculadas
 
 # ============================================
-# HEADER / HERO SECTION
+# HEADER CON LOGO
 # ============================================
-st.markdown('<div class="hero-title">🍹 CocktailGenius</div>', unsafe_allow_html=True)
-st.markdown('<div class="hero-subtitle">TU BAR PERSONAL, IMPULSADO POR INTELIGENCIA ARTIFICIAL</div>', unsafe_allow_html=True)
+col_logo, col_title = st.columns([1, 3])
+
+with col_logo:
+    try:
+        st.image("logo.png", width=120)
+    except:
+        st.markdown("<div style='font-size: 4rem; text-align: center;'>🍹</div>", unsafe_allow_html=True)
+
+with col_title:
+    st.markdown('<div class="main-title">CocktailGenius</div>', unsafe_allow_html=True)
+    st.markdown('<div class="hero-subtitle">TU BAR PERSONAL, IMPULSADO POR INTELIGENCIA ARTIFICIAL</div>', unsafe_allow_html=True)
+
+st.markdown("---")
 
 # ============================================
 # NAVEGACIÓN POR TABS
@@ -347,7 +382,7 @@ with tabs[0]:
     with col1:
         st.markdown("""
         <div class="card-elegant">
-            <h3 style="color: #D4A017; font-family: 'Playfair Display', serif;">La revolución de la mixología llegó</h3>
+            <h2 style="color: #D4A017 !important; font-size: 2rem; margin-bottom: 1rem;">La revolución de la mixología llegó</h2>
             <p class="card-text">
             CocktailGenius es la primera plataforma que combina <b>inteligencia artificial</b> 
             con el arte de la coctelería. Desde recetas personalizadas hasta predicciones 
@@ -364,7 +399,6 @@ with tabs[0]:
         </div>
         """, unsafe_allow_html=True)
         
-        # Estadísticas
         c1, c2, c3, c4 = st.columns(4)
         c1.metric("Recetas", "500+", "+50/mes")
         c2.metric("Usuarios", "2,400+", "+12%")
@@ -374,11 +408,16 @@ with tabs[0]:
     with col2:
         st.markdown("""
         <div class="card-elegant" style="text-align: center;">
-            <h4 style="color: #D4A017;">🎬 Conoce CocktailGenius</h4>
+            <h3 style="color: #D4A017 !important;">🎬 Conoce CocktailGenius</h3>
             <p class="card-text">Video comercial generado con IA<br>27 segundos</p>
         </div>
         """, unsafe_allow_html=True)
-        st.info("📹 Aquí irá tu video MP4 de 27 segundos")
+        
+        # VIDEO
+        try:
+            st.video("video.mp4")
+        except:
+            st.info("📹 Aquí irá tu video MP4 de 27 segundos")
 
 # ============================================
 # TAB 2: GENRECETA IA
@@ -391,7 +430,7 @@ with tabs[1]:
     with col1:
         st.markdown("""
         <div class="card-elegant">
-            <h4 class="card-title">¿Qué tienes en tu barra?</h4>
+            <h3 class="card-title">¿Qué tienes en tu barra?</h3>
             <p class="card-text">
             Ingresa los ingredientes que tienes disponibles 
             (separados por comas) y nuestra IA te sugerirá 
@@ -416,24 +455,24 @@ with tabs[1]:
                 for receta in resultados:
                     st.markdown(f"""
                     <div class="recipe-card">
-                        <h3 style="color: #D4A017; margin-bottom: 0.5rem;">{receta['nombre']}</h3>
-                        <p style="color: #888; font-size: 0.9rem;">
+                        <h3 style="color: #D4A017 !important; margin-bottom: 0.5rem;">{receta['nombre']}</h3>
+                        <p style="color: #888 !important; font-size: 0.9rem;">
                         ⏱️ {receta['tiempo']} min | {"⭐" * receta['dificultad']}{"☆" * (5-receta['dificultad'])} | Dificultad: {receta['dificultad']}/5
                         </p>
                         
-                        <h4 style="color: #F4D03F; margin-top: 1rem;">🧪 Ingredientes y medidas:</h4>
+                        <h4 style="color: #F4D03F !important; margin-top: 1rem;">🧪 Ingredientes y medidas:</h4>
                     """, unsafe_allow_html=True)
                     
                     for ing, medida in receta['medidas'].items():
                         st.markdown(f'<span class="ingredient-tag">{ing}: {medida}</span>', unsafe_allow_html=True)
                     
-                    st.markdown("<h4 style='color: #F4D03F; margin-top: 1rem;'>👨‍🍳 Preparación paso a paso:</h4>", unsafe_allow_html=True)
+                    st.markdown("<h4 style='color: #F4D03F !important; margin-top: 1rem;'>👨‍🍳 Preparación paso a paso:</h4>", unsafe_allow_html=True)
                     for i, paso in enumerate(receta['preparacion'], 1):
-                        st.markdown(f'<div style="display: flex; align-items: start; margin: 0.5rem 0;"><span class="step-number">{i}</span><span style="color: #e0e0e0;">{paso}</span></div>', unsafe_allow_html=True)
+                        st.markdown(f'<div style="display: flex; align-items: start; margin: 0.5rem 0;"><span class="step-number">{i}</span><span style="color: #e0e0e0 !important;">{paso}</span></div>', unsafe_allow_html=True)
                     
                     st.markdown(f"""
                         <div class="result-box" style="margin-top: 1rem;">
-                            <b>💡 Tip profesional:</b> {receta['tips']}
+                            <b style="color: #D4A017 !important;">💡 Tip profesional:</b> <span style="color: #e0e0e0 !important;">{receta['tips']}</span>
                         </div>
                     </div>
                     """, unsafe_allow_html=True)
@@ -453,12 +492,12 @@ with tabs[2]:
     with col1:
         st.markdown("""
         <div class="card-elegant">
-            <h4 class="card-title">Machine Learning aplicado a mixología</h4>
+            <h3 class="card-title">Machine Learning aplicado a mixología</h3>
             <p class="card-text">
             Nuestro modelo de <b>Regresión Lineal</b> predice la dificultad 
             de un cóctel (escala 1-5) basado en:
             </p>
-            <ul style="color: #e0e0e0;">
+            <ul style="color: #e0e0e0 !important;">
                 <li>Número de ingredientes</li>
                 <li>Tiempo de preparación</li>
                 <li>Número de técnicas requeridas</li>
@@ -479,10 +518,9 @@ with tabs[2]:
         dif = predecir_dificultad(ing, tiempo, tec)
         niveles = {1:"🟢 Muy Fácil", 2:"🟡 Fácil", 3:"🟠 Medio", 4:"🔴 Difícil", 5:"⚫ Experto"}
         
-        st.success(f"**Dificultad predicha: {dif}/5**\n\n{niveles[dif]}")
+        st.success(f"**Dificultad predicha: {dif}/5** — {niveles[dif]}")
     
     with col2:
-        # Dataset
         st.subheader("📋 Dataset de entrenamiento")
         df = pd.DataFrame({
             'Cóctel': ['Mojito', 'Margarita', 'Old Fashioned', 'Negroni', 'Daiquiri', 'Piña Colada', 'Whiskey Sour', 'Espresso Martini', 'Cosmopolitan', 'Mai Tai'],
@@ -493,7 +531,6 @@ with tabs[2]:
         })
         st.dataframe(df, use_container_width=True)
         
-        # Gráfica
         fig, ax = plt.subplots(figsize=(10, 6))
         counts = df['Dificultad'].value_counts().sort_index()
         colors = ['#2ecc71', '#f39c12', '#e67e22', '#e74c3c']
@@ -505,7 +542,7 @@ with tabs[2]:
         ax.set_xticklabels(['1-Fácil', '2-Medio', '3-Difícil', '4-Experto'], color='white')
         ax.tick_params(colors='white')
         ax.set_facecolor('#1a1a2e')
-        fig.patch.set_facecolor('#0f0f0f')
+        fig.patch.set_facecolor('#0a0a0a')
         for bar in bars:
             height = bar.get_height()
             ax.text(bar.get_x() + bar.get_width()/2., height, f'{int(height)}', 
@@ -523,7 +560,7 @@ with tabs[3]:
     with col1:
         st.markdown("""
         <div class="card-elegant">
-            <h4 class="card-title">Ajusta recetas para cualquier ocasión</h4>
+            <h3 class="card-title">Ajusta recetas para cualquier ocasión</h3>
             <p class="card-text">
             ¿Organizas una cena para 8 personas pero la receta es para 1? 
             Nuestra calculadora mantiene las proporciones exactas preservando 
@@ -552,26 +589,26 @@ with tabs[3]:
             
             st.markdown(f"""
             <div class="recipe-card">
-                <h3 style="color: #D4A017;">{receta['nombre']} — {num_personas} personas</h3>
-                <p style="color: #888;">⏱️ {receta['tiempo']} min por preparación | {"⭐" * receta['dificultad']}</p>
+                <h3 style="color: #D4A017 !important;">{receta['nombre']} — {num_personas} personas</h3>
+                <p style="color: #888 !important;">⏱️ {receta['tiempo']} min por preparación | {"⭐" * receta['dificultad']}</p>
                 
-                <h4 style="color: #F4D03F; margin-top: 1rem;">🧪 Medidas ajustadas:</h4>
+                <h4 style="color: #F4D03F !important; margin-top: 1rem;">🧪 Medidas ajustadas:</h4>
             """, unsafe_allow_html=True)
             
             for ing, medida in medidas_nuevas.items():
-                st.markdown(f'<div style="display: flex; justify-content: space-between; padding: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.1);"><span style="color: #e0e0e0;">{ing}</span><span style="color: #D4A017; font-weight: 600;">{medida}</span></div>', unsafe_allow_html=True)
+                st.markdown(f'<div style="display: flex; justify-content: space-between; padding: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.1);"><span style="color: #e0e0e0 !important;">{ing}</span><span style="color: #D4A017 !important; font-weight: bold;">{medida}</span></div>', unsafe_allow_html=True)
             
             st.markdown(f"""
-                <h4 style="color: #F4D03F; margin-top: 1.5rem;">👨‍🍳 Preparación (igual para cualquier cantidad):</h4>
+                <h4 style="color: #F4D03F !important; margin-top: 1.5rem;">👨‍🍳 Preparación:</h4>
             """, unsafe_allow_html=True)
             
             for i, paso in enumerate(receta['preparacion'], 1):
-                st.markdown(f'<div style="display: flex; align-items: start; margin: 0.5rem 0;"><span class="step-number">{i}</span><span style="color: #e0e0e0;">{paso}</span></div>', unsafe_allow_html=True)
+                st.markdown(f'<div style="display: flex; align-items: start; margin: 0.5rem 0;"><span class="step-number">{i}</span><span style="color: #e0e0e0 !important;">{paso}</span></div>', unsafe_allow_html=True)
             
             st.markdown(f"""
                 <div class="result-box" style="margin-top: 1rem;">
-                    <b>💡 Tip:</b> {receta['tips']}<br><br>
-                    <b>📊 Total estimado:</b> Prepara {num_personas * receta['tiempo']} minutos en total
+                    <b style="color: #D4A017 !important;">💡 Tip:</b> <span style="color: #e0e0e0 !important;">{receta['tips']}</span><br><br>
+                    <b style="color: #D4A017 !important;">📊 Total estimado:</b> <span style="color: #e0e0e0 !important;">{num_personas * receta['tiempo']} minutos en total</span>
                 </div>
             </div>
             """, unsafe_allow_html=True)
@@ -584,7 +621,7 @@ with tabs[4]:
     
     st.markdown("""
     <div class="card-elegant" style="text-align: center;">
-        <h3 style="color: #D4A017; font-family: 'Playfair Display', serif;">Desarrolla tu paladar de experto</h3>
+        <h3 style="color: #D4A017 !important;">Desarrolla tu paladar de experto</h3>
         <p class="card-text">
         Programa educativo guiado por IA para aprender a identificar notas, 
         aromas y matices en destilados premium.
@@ -644,7 +681,7 @@ with tabs[5]:
     
     st.markdown("""
     <div class="card-elegant" style="text-align: center;">
-        <h3 style="color: #D4A017;">Tu bartender personal, disponible 24/7</h3>
+        <h3 style="color: #D4A017 !important;">Tu bartender personal, disponible 24/7</h3>
         <p class="card-text">
         Pregúntale sobre recetas, técnicas, ingredientes o cualquier duda de mixología. 
         Impulsado por inteligencia artificial.
@@ -654,11 +691,11 @@ with tabs[5]:
     
     # Embed del chatbot de Botpress
     st.components.v1.html("""
-    <div style="height: 600px; width: 100%; border-radius: 15px; overflow: hidden; border: 2px solid #D4A017;">
+    <div style="height: 500px; width: 100%;">
         <script src="https://cdn.botpress.cloud/webchat/v3.6/inject.js"></script>
         <script src="https://files.bpcontent.cloud/2026/05/07/21/20260507211006-AAWTTVTT.js" defer></script>
     </div>
-    """, height=600)
+    """, height=500)
     
     st.info("💡 El chatbot se carga en la esquina inferior derecha. Haz clic en el icono para conversar.")
 
@@ -673,7 +710,7 @@ with tabs[6]:
     with col1:
         st.markdown("""
         <div class="card-elegant">
-            <h3 style="color: #D4A017; font-family: 'Playfair Display', serif;">🎯 Misión</h3>
+            <h3 style="color: #D4A017 !important;">🎯 Misión</h3>
             <p class="card-text">
             Democratizar la coctelería de autor mediante inteligencia artificial, 
             ayudando a las personas a descubrir, crear y perfeccionar experiencias 
@@ -684,7 +721,7 @@ with tabs[6]:
         
         st.markdown("""
         <div class="card-elegant">
-            <h3 style="color: #D4A017; font-family: 'Playfair Display', serif;">👁️ Visión</h3>
+            <h3 style="color: #D4A017 !important;">👁️ Visión</h3>
             <p class="card-text">
             Convertirnos en la plataforma líder de mixología inteligente a nivel global, 
             redefiniendo la manera en que las personas experimentan la coctelería.
@@ -694,7 +731,7 @@ with tabs[6]:
         
         st.markdown("""
         <div class="card-elegant">
-            <h3 style="color: #D4A017; font-family: 'Playfair Display', serif;">💎 Valores</h3>
+            <h3 style="color: #D4A017 !important;">💎 Valores</h3>
             <p class="card-text">
             • <b>Innovación:</b> Tecnología al servicio del arte<br>
             • <b>Accesibilidad:</b> Mixología para todos<br>
@@ -707,7 +744,7 @@ with tabs[6]:
     with col2:
         st.markdown("""
         <div class="card-elegant">
-            <h3 style="color: #D4A017; font-family: 'Playfair Display', serif;">📬 Contacto</h3>
+            <h3 style="color: #D4A017 !important;">📬 Contacto</h3>
             <p class="card-text">
             ¿Tienes dudas, sugerencias o quieres colaborar?<br><br>
             📧 <b>Email:</b> hola@cocktailgenius.ai<br>
@@ -733,9 +770,9 @@ with tabs[6]:
 # ============================================
 st.markdown("""
 <div class="footer">
-    <p style="font-size: 1.5rem; margin-bottom: 0.5rem;">🍹 CocktailGenius</p>
-    <p>Tu bar personal, impulsado por inteligencia artificial</p>
-    <p style="margin-top: 1rem; font-size: 0.8rem;">
+    <p style="font-size: 1.5rem; margin-bottom: 0.5rem; color: #D4A017 !important;">🍹 CocktailGenius</p>
+    <p style="color: #888 !important;">Tu bar personal, impulsado por inteligencia artificial</p>
+    <p style="margin-top: 1rem; font-size: 0.8rem; color: #666 !important;">
     © 2026 CocktailGenius | Proyecto Final - Fundamentos de IA | 
     Hecho con ❤️, 🧠 IA y 🥃 pasión por la mixología
     </p>
